@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mobiletayduky/Helper/Validate.dart';
+import 'package:mobiletayduky/ViewModel/LoginViewModel.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -7,6 +9,28 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginSceen extends State<LoginPage> {
+  final LoginViewModel loginVM = LoginViewModel();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  bool _autoValidate = false;
+
+  void loginCheck() async {
+    final form = _formKey.currentState;
+    if(form.validate()) {
+      print('oke');
+      String email = emailController.text.trim();
+      String password = passwordController.text.trim();
+      String status = await loginVM.SignIn(email, password);
+      print('Status: '+status);
+    }
+    else {
+      print('not oke');
+      setState(() => _autoValidate = true);
+    }
+  }
+
   Widget _buildEmailEdt() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,18 +56,22 @@ class _LoginSceen extends State<LoginPage> {
                   offset: Offset(0, 2),
                 )
               ]),
-          height: 60,
-          child: TextField(
+//          height: 60,
+          child: TextFormField(
+            controller: emailController,
             keyboardType: TextInputType.emailAddress,
             style: TextStyle(color: Colors.white),
+            validator: Validation.validateEmail,
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14),
+              counterText: "",
+              contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
               prefixIcon: Icon(Icons.email, color: Colors.white),
               hintText: 'Enter your Email',
               hintStyle: TextStyle(
                   color: Colors.white70, fontFamily: "Time New Roman"),
             ),
+            maxLength: 32,
           ),
         )
       ],
@@ -75,19 +103,23 @@ class _LoginSceen extends State<LoginPage> {
                   offset: Offset(0, 2),
                 )
               ]),
-          height: 60,
-          child: TextField(
+//          height: 60,
+          child: TextFormField(
+            controller: passwordController,
             obscureText: true,
             style: TextStyle(color: Colors.white),
+            validator: Validation.validatePassword,
             decoration: InputDecoration(
               border: InputBorder.none,
-              contentPadding: EdgeInsets.only(top: 14),
+              counterText: "",
+              contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
               prefixIcon: Icon(Icons.lock, color: Colors.white),
               hintText: 'Enter your Email',
               hintStyle: TextStyle(
                   color: Colors.white70,
                   fontFamily: "Time New Roman"),
             ),
+            maxLength: 16,
           ),
         )
       ],
@@ -100,7 +132,7 @@ class _LoginSceen extends State<LoginPage> {
       width: double.infinity,
       child: RaisedButton(
         elevation: 5,
-        onPressed: () => print('Login Button'),
+        onPressed: () => loginCheck(),
         padding: EdgeInsets.all(15),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
@@ -142,6 +174,7 @@ class _LoginSceen extends State<LoginPage> {
       ]),),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,26 +205,30 @@ class _LoginSceen extends State<LoginPage> {
                     horizontal: 40,
                     vertical: 120,
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        'Sign In',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "Time New Roman",
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
+                  child: Form(
+                    key: _formKey,
+                    autovalidate: _autoValidate,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Sign In',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: "Time New Roman",
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 30),
-                      _buildEmailEdt(),
-                      SizedBox(height: 30),
-                      _buildPasswordEdt(),
-                      SizedBox(height: 30),
-                      _buildLoginBtn(),
-                      _buildSignUpBtn(),
-                    ],
+                        SizedBox(height: 30),
+                        _buildEmailEdt(),
+                        SizedBox(height: 30),
+                        _buildPasswordEdt(),
+                        SizedBox(height: 30),
+                        _buildLoginBtn(),
+                        _buildSignUpBtn(),
+                      ],
+                    ),
                   ),
                 ),
               )
