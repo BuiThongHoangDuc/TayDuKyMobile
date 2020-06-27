@@ -11,7 +11,7 @@ abstract class IUserRepository {
 
 class UserRepository implements IUserRepository {
   @override
-  Future signIn(String loginJson) async {
+  Future<dynamic> signIn(String loginJson) async {
     String apiSignIn = APIHelper.apiLogin();
     Map<String, String> header = {
       HttpHeaders.contentTypeHeader: "application/json",
@@ -20,7 +20,6 @@ class UserRepository implements IUserRepository {
     http.Response response =
         await http.post(apiSignIn, headers: header, body: loginJson);
     Map<String, dynamic> userSimpleInfo = jsonDecode(response.body);
-    print(response.statusCode);
     if (response.statusCode == 404) {
       return null;
     } else {
