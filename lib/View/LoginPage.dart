@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mobiletayduky/Helper/Validate.dart';
+import 'package:mobiletayduky/View/HomePage.dart';
+import 'package:mobiletayduky/ViewModel/HomeViewModel.dart';
 import 'package:mobiletayduky/ViewModel/LoginViewModel.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -9,6 +10,28 @@ class LoginPage extends StatelessWidget {
   final LoginViewModel loginVM;
 
   LoginPage(this.loginVM);
+
+  final email = TextEditingController();
+  final pass = TextEditingController();
+
+  void loginFunction(BuildContext context) async {
+    if (await loginVM.login()) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage(homeModel: HomeViewModel(),)),
+      );
+    } else {
+      email.text = "";
+      pass.text = "";
+      Fluttertoast.showToast(
+        msg: "Account Is Invalid",
+        textColor: Colors.red,
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+      );
+    }
+  }
 
   Widget _buildEmailEdt() {
     return Column(
@@ -37,6 +60,7 @@ class LoginPage extends StatelessWidget {
               ]),
 //          height: 60,
           child: TextField(
+            controller: email,
             onChanged: (text) {
               loginVM.changeEmail(text);
             },
@@ -86,6 +110,7 @@ class LoginPage extends StatelessWidget {
               ]),
 //          height: 60,
           child: TextField(
+            controller: pass,
             onChanged: (text) {
               loginVM.changePassword(text);
             },
@@ -108,13 +133,15 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _buildLoginBtn() {
+  Widget _buildLoginBtn(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 25),
       width: double.infinity,
       child: RaisedButton(
         elevation: 5,
-        onPressed: () => {loginVM.login()},
+        onPressed: () => {
+          loginFunction(context),
+        },
         padding: EdgeInsets.all(15),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
@@ -209,7 +236,7 @@ class LoginPage extends StatelessWidget {
                           SizedBox(height: 30),
                           _buildPasswordEdt(),
                           SizedBox(height: 30),
-                          _buildLoginBtn(),
+                          _buildLoginBtn(context),
                           _buildSignUpBtn(),
                         ],
                       ),

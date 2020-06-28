@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "190495629214",
+    "firebase_url": "https://journey-to-the-west-3db0d.firebaseio.com",
+    "project_id": "journey-to-the-west-3db0d",
+    "storage_bucket": "journey-to-the-west-3db0d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190495629214:android:06a4fb094f60b86f00408f",
+        "android_client_info": {
+          "package_name": "ducbth.example.mobiletayduky"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "190495629214-3bmipfnje53ks0avshv7o4biir20gavv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsGNsGRBzMPQYtCmKK2tsUkpyBDp305Uk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "190495629214-3bmipfnje53ks0avshv7o4biir20gavv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

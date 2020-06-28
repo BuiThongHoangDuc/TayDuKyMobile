@@ -1,10 +1,10 @@
 class APIHelper {
   static String apiLogin() {
-    String url = "http://192.168.43.62/api/Login";
+    String url = "http://192.168.1.11/api/Login";
     return url;
   }
   static String testAPI() {
-    String url = "http://192.168.43.62/api/values";
+    String url = "http://192.168.1.11/api/values";
     return url;
   }
 }
