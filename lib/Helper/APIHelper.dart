@@ -7,4 +7,8 @@ class APIHelper {
     String url = "http://192.168.1.11/api/values";
     return url;
   }
+  static String apiListScenario() {
+    String url = "http://192.168.1.11/api/Scenarios/List";
+    return url;
+  }
 }

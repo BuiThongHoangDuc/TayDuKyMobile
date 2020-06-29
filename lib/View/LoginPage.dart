@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:mobiletayduky/View/HomePage.dart';
-import 'package:mobiletayduky/ViewModel/HomeViewModel.dart';
+import 'package:mobiletayduky/View/ScenarioPage.dart';
 import 'package:mobiletayduky/ViewModel/LoginViewModel.dart';
+import 'package:mobiletayduky/ViewModel/ScenarioViewModel.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class LoginPage extends StatelessWidget {
@@ -18,7 +18,7 @@ class LoginPage extends StatelessWidget {
     if (await loginVM.login()) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage(homeModel: HomeViewModel(),)),
+        MaterialPageRoute(builder: (context) => ScenarioPage(scenarioModel: ScenarioViewModel(),)),
       );
     } else {
       email.text = "";
@@ -210,7 +210,7 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 ScopedModelDescendant<LoginViewModel>(
-                    builder: (context, child, model) {
+                    builder: (context, child, loginVM) {
                   return Container(
                     height: double.infinity,
                     child: SingleChildScrollView(

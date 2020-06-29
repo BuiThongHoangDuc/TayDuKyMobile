@@ -1,34 +1,81 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:mobiletayduky/Model/Destination.dart';
+import 'package:mobiletayduky/View/DrawerBar.dart';
+import 'package:mobiletayduky/View/LoadingScreen.dart';
+import 'package:mobiletayduky/ViewModel/DrawerViewModel.dart';
+import 'package:mobiletayduky/ViewModel/ScenarioViewModel.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class ScenarioPage extends StatelessWidget {
+  final ScenarioViewModel scenarioModel;
+
+  ScenarioPage({this.scenarioModel});
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        title: Text("Scenario Page"),
-      ),
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-        child: getListScenario(context),
+    return ScopedModel<ScenarioViewModel>(
+      model: scenarioModel,
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text("Scenario Page"),
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: Icon(Icons.person),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+                color: Colors.white,
+              );
+            },
+          ),
+        ),
+        drawer: MyDrawer(model: DrawerViewModel()),
+        body: ScopedModelDescendant<ScenarioViewModel>(
+          builder: (context, child, scenarioModel) {
+            if (scenarioModel.isLoading == true) {
+              return LoadingScreen();
+            } else
+              return Padding(
+                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                child: getListScenario(context, scenarioModel),
+              );
+          },
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: scenarioModel.currentIndex,
+          onTap: (index) {
+            scenarioModel.onChangeBar(context, index);
+          },
+          items: allDestination.map((Destination destination) {
+            return BottomNavigationBarItem(
+              icon: Icon(destination.icon),
+              title: Text(destination.title),
+            );
+          }).toList(),
+          showUnselectedLabels: false,
+          selectedItemColor: Colors.blue,
+          unselectedItemColor: Colors.black45,
+          type: BottomNavigationBarType.fixed,
+        ),
       ),
     );
   }
 }
 
-getListScenario(BuildContext context) {
+getListScenario(BuildContext context, ScenarioViewModel model) {
   return ListView.builder(
     scrollDirection: Axis.vertical,
-    itemCount: 5,
-    itemBuilder: _getScenarioUI,
+    itemCount: model.scenarioList.length,
+    itemBuilder: (context, index) {
+      return _getScenarioUI(context, index, model);
+    },
     padding: EdgeInsets.all(0),
   );
 }
 
-Widget _getScenarioUI(BuildContext context, int index) {
+Widget _getScenarioUI(
+    BuildContext context, int index, ScenarioViewModel model) {
   return Card(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(15.0),
@@ -41,6 +88,7 @@ Widget _getScenarioUI(BuildContext context, int index) {
       child: Container(
         height: 172,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Container(
               height: 172,
@@ -51,9 +99,8 @@ Widget _getScenarioUI(BuildContext context, int index) {
                     topLeft: Radius.circular(15),
                   ),
                   image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage(
-                        "https://firebasestorage.googleapis.com/v0/b/journey-to-the-west-3db0d.appspot.com/o/chapter3.jpeg?alt=media&token=43e1be21-7b9f-437d-b386-c7c0b3015362"),
+                    fit: BoxFit.fill,
+                    image: NetworkImage(model.scenarioList[index].scImage),
                   )),
             ),
             Container(
@@ -64,11 +111,14 @@ Widget _getScenarioUI(BuildContext context, int index) {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
 //                  Text(index.toString()),
-                    Text('The Demon He Realizes',
+                  Container(
+                    width: 260,
+                    child: Text(model.scenarioList[index].scName,
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.red)),
+                  ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
                       child: Container(
@@ -80,7 +130,6 @@ Widget _getScenarioUI(BuildContext context, int index) {
                         child: Row(
                           children: <Widget>[
                             Container(
-//                            color: Colors.red,
                               width: 70,
                               child: Text('Location:',
                                   textAlign: TextAlign.center,
@@ -89,9 +138,11 @@ Widget _getScenarioUI(BuildContext context, int index) {
                                       fontWeight: FontWeight.bold)),
                             ),
                             Container(
-//                            color: Colors.yellow,
                               width: 140,
-                              child: Text('Under the mountant'),
+                              child: Text(
+                                model.scenarioList[index].scLocation,
+//                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ),
@@ -103,7 +154,9 @@ Widget _getScenarioUI(BuildContext context, int index) {
                       child: Container(
                         width: 260,
                         child: Text(
-                          'The Demon He Realizes Save Wukong To DeFeet him',
+                          model.scenarioList[index].scLocation,
+//                          overflow: TextOverflow.ellipsis,
+//                          maxLines: 3,
                           style: TextStyle(
                               fontSize: 15,
                               color: Color.fromARGB(255, 48, 48, 54)),

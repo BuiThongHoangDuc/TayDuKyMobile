@@ -11,30 +11,33 @@ class MyDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScopedModel<DrawerViewModel>(
-      model: model,
-      child: Drawer(
-        child: new ListView(
-          children: <Widget>[
-            UserAccountsDrawerHeader(
-                accountName: Text(model.userName),
-                accountEmail: Text(model.userEmail),
-                currentAccountPicture: new CircleAvatar(
-                  backgroundColor: Colors.brown,
-                  child: Text("P"),
-                )),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Profile'),
-            ),
-            Divider(),
-            ListTile(
-              leading: Icon(Icons.exit_to_app),
-              title: Text('Signout'),
-              onTap: () => model.signOut(context),
-            ),
-          ],
-        ),
-      ),
-    );
+        model: model,
+        child: ScopedModelDescendant<DrawerViewModel>(
+          builder: (context, child, model) {
+            return Drawer(
+              child: new ListView(
+                children: <Widget>[
+                  UserAccountsDrawerHeader(
+                      accountName: Text(model.userName),
+                      accountEmail: Text(model.userEmail),
+                      currentAccountPicture: new CircleAvatar(
+                        backgroundColor: Colors.brown,
+                        child: Text("P"),
+                      )),
+                  ListTile(
+                    leading: Icon(Icons.person),
+                    title: Text('Profile'),
+                  ),
+                  Divider(),
+                  ListTile(
+                    leading: Icon(Icons.exit_to_app),
+                    title: Text('Signout'),
+                    onTap: () => model.signOut(context),
+                  ),
+                ],
+              ),
+            );
+          },
+        ));
   }
 }
