@@ -2,47 +2,48 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:mobiletayduky/Helper/APIHelper.dart';
-import 'package:mobiletayduky/Model/ScenarioBasicModel.dart';
+import 'package:mobiletayduky/Model/EquipmentBasicModel.dart';
 import 'package:http/http.dart' as http;
-
-abstract class IScenarioRepository {
-  Future<List<ScenarioBasicModel>> getScenarios();
-  Future<List<ScenarioBasicModel>> searchScenarios(String search);
+abstract class IEquipmentRepository {
+  Future<List<EquipmentBasicModel>> getListEquipment();
+  Future<List<EquipmentBasicModel>> searchListEquipment(String eName);
 }
 
-class ScenarioRepository implements IScenarioRepository {
+class EquipmentRepository implements IEquipmentRepository {
   @override
-  Future<List<ScenarioBasicModel>> getScenarios() async {
-    String urlAPI = APIHelper.apiListScenario();
+  Future<List<EquipmentBasicModel>> getListEquipment() async {
+    String urlAPI = APIHelper.apiListEquipment();
     Map<String, String> header = {
       HttpHeaders.contentTypeHeader: "application/json",
     };
 
     http.Response response = await http.get(urlAPI, headers: header);
-    List<ScenarioBasicModel> list;
+    List<EquipmentBasicModel> list;
     if (response.statusCode == 200) {
       list = (json.decode(response.body) as List)
-          .map((data) => ScenarioBasicModel.fromJson(data))
+          .map((data) => EquipmentBasicModel.fromJson(data))
           .toList();
+      print(list[0].equipmentImage);
       return list;
-    } else return list;
+    } else
+      return list;
   }
 
   @override
-  Future<List<ScenarioBasicModel>> searchScenarios(String search) async {
+  Future<List<EquipmentBasicModel>> searchListEquipment(String eName) async {
     String urlAPI = APIHelper.apiProject();
     Map<String, String> header = {
       HttpHeaders.contentTypeHeader: "application/json",
     };
     var queryParameters ={
-      'ScenarioName': search
+      'eName': eName
     };
-    var uri = Uri.http(urlAPI,"/api/Scenarios",queryParameters);
+    var uri = Uri.http(urlAPI,"/api/Equipments",queryParameters);
     http.Response response = await http.get(uri, headers: header);
-    List<ScenarioBasicModel> list;
+    List<EquipmentBasicModel> list;
     if (response.statusCode == 200) {
       list = (json.decode(response.body) as List)
-          .map((data) => ScenarioBasicModel.fromJson(data))
+          .map((data) => EquipmentBasicModel.fromJson(data))
           .toList();
       return list;
     } else return list;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobiletayduky/Model/Destination.dart';
 import 'package:mobiletayduky/View/DrawerBar.dart';
+import 'package:mobiletayduky/View/LoadingScreen.dart';
+import 'package:mobiletayduky/View/NotFoundScreen.dart';
 import 'package:mobiletayduky/ViewModel/ActorViewModel.dart';
 import 'package:mobiletayduky/ViewModel/DrawerViewModel.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -29,7 +31,49 @@ class ActorPage extends StatelessWidget {
           ),
         ),
         drawer: MyDrawer(model: DrawerViewModel()),
-        body: _buildList(context, actorVModel),
+        body: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Column(
+            children: <Widget>[
+              ScopedModelDescendant<ActorViewModel>(
+                  builder: (context, child, actorVModel) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: actorVModel.value,
+                    onChanged: (value) {
+                      actorVModel.seacrhList(value);
+                    },
+                    decoration: InputDecoration(
+                        labelText: "Search",
+                        hintText: "Search Actor",
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(25.0)))),
+                  ),
+                );
+              }),
+              ScopedModelDescendant<ActorViewModel>(
+                builder: (context, child, actorVModel) {
+                  if (actorVModel.isLoading == true) {
+                    return Expanded(
+                      child: LoadingScreen(),
+                    );
+                  } else if (actorVModel.isLoading == false &&
+                      actorVModel.isHave) {
+                    return Expanded(
+                      child: NotFoundScreen(),
+                    );
+                  } else
+                    return Expanded(
+                      child: _buildList(context, actorVModel),
+                    );
+                },
+              ),
+            ],
+          ),
+        ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: actorVModel.currentIndex,
           onTap: (index) {
@@ -52,20 +96,16 @@ class ActorPage extends StatelessWidget {
 }
 
 Widget _buildList(BuildContext context, ActorViewModel actorVModel) {
-  return ScopedModelDescendant<ActorViewModel>(
-    builder: (context, child, actorVModel) {
-      return ListView.builder(
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return ListTile(
-              title: Text('Hoang Duc'),
-              subtitle: Text('Hello it me'),
-              leading: CircleAvatar(
-                backgroundImage: NetworkImage(
-                    'https://firebasestorage.googleapis.com/v0/b/journey-to-the-west-3db0d.appspot.com/o/person1.jpg?alt=media&token=b446452e-2358-4905-94e2-86f6108f49a3'),
-              ));
-        },
-      );
+  return ListView.builder(
+    itemCount: actorVModel.userList.length,
+    itemBuilder: (context, index) {
+      return ListTile(
+          title: Text(actorVModel.userList[index].userName),
+          subtitle: Text(actorVModel.userList[index].userEmail),
+          leading: CircleAvatar(
+            backgroundImage:
+                NetworkImage(actorVModel.userList[index].userImage),
+          ));
     },
   );
 }

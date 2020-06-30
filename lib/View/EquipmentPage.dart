@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:mobiletayduky/Model/Destination.dart';
 import 'package:mobiletayduky/View/DrawerBar.dart';
+import 'package:mobiletayduky/View/LoadingScreen.dart';
+import 'package:mobiletayduky/View/NotFoundScreen.dart';
 import 'package:mobiletayduky/ViewModel/DrawerViewModel.dart';
 import 'package:mobiletayduky/ViewModel/EquipmentViewModel.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -29,16 +31,50 @@ class EquipmentPage extends StatelessWidget {
           ),
         ),
         drawer: MyDrawer(model: DrawerViewModel()),
-        body: ScopedModelDescendant<EquipmentViewModel>(
-          builder: (context, child, equipVM) {
-//            if (scenarioModel.isLoading == true) {
-//              return LoadingScreen();
-//            } else
-            return Padding(
-              padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-              child: getListEquipment(context, equipVM),
-            );
-          },
+        body: GestureDetector(
+          child: Column(
+            children: <Widget>[
+              ScopedModelDescendant<EquipmentViewModel>(
+                builder: (context, child, equipVM) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: equipVM.value,
+                      onChanged: (value) {
+                        equipVM.seacrhList(value);
+                      },
+                      decoration: InputDecoration(
+                          labelText: "Search",
+                          hintText: "Search Actor",
+                          prefixIcon: Icon(Icons.search),
+                          border: OutlineInputBorder(
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(25.0)))),
+                    ),
+                  );
+                },
+              ),
+              ScopedModelDescendant<EquipmentViewModel>(
+                builder: (context, child, equipVM) {
+                  if (equipVM.isLoading == true) {
+                    return Expanded(
+                      child: LoadingScreen(),
+                    );
+                  } else if (equipVM.isLoading == false && equipVM.isHave) {
+                    return Expanded(
+                      child: NotFoundScreen(),
+                    );
+                  } else
+                    return Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                        child: getListEquipment(context, equipVM),
+                      ),
+                    );
+                },
+              ),
+            ],
+          ),
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: equipVM.currentIndex,
@@ -64,7 +100,7 @@ class EquipmentPage extends StatelessWidget {
 Widget getListEquipment(BuildContext context, EquipmentViewModel equipVM) {
   return ListView.builder(
     scrollDirection: Axis.vertical,
-    itemCount: 5,
+    itemCount: equipVM.equipmentList.length,
     itemBuilder: (context, index) {
       return _getEquipmentUI(context, index, equipVM);
     },
@@ -98,7 +134,7 @@ Widget _getEquipmentUI(
                   image: DecorationImage(
                     fit: BoxFit.fill,
                     image: NetworkImage(
-                        'https://firebasestorage.googleapis.com/v0/b/journey-to-the-west-3db0d.appspot.com/o/equipment1.jpg?alt=media&token=1c1b715a-ae09-470a-bb7c-2b284a7bfdb7'),
+                        equipVM.equipmentList[index].equipmentImage),
                   )),
             ),
             Container(
@@ -110,7 +146,7 @@ Widget _getEquipmentUI(
                   children: <Widget>[
                     Container(
                       width: 260,
-                      child: Text('Magic Wooden Staff',
+                      child: Text(equipVM.equipmentList[index].equipmentName,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           style: TextStyle(
@@ -142,7 +178,8 @@ Widget _getEquipmentUI(
 //                            color: Colors.yellow,
                               width: 30,
                               child: Text(
-                                '150',
+                                equipVM.equipmentList[index].equipmentQuantity
+                                    .toString(),
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(color: Colors.green),
                               ),
@@ -156,7 +193,7 @@ Widget _getEquipmentUI(
                       child: Container(
                         width: 260,
                         child: Text(
-                          'This is use to fuckup alot of people so use it good',
+                          equipVM.equipmentList[index].equipmentDes,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                           style: TextStyle(

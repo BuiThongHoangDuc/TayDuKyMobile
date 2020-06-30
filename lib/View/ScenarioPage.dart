@@ -3,6 +3,7 @@ import 'package:flutter/painting.dart';
 import 'package:mobiletayduky/Model/Destination.dart';
 import 'package:mobiletayduky/View/DrawerBar.dart';
 import 'package:mobiletayduky/View/LoadingScreen.dart';
+import 'package:mobiletayduky/View/NotFoundScreen.dart';
 import 'package:mobiletayduky/ViewModel/DrawerViewModel.dart';
 import 'package:mobiletayduky/ViewModel/ScenarioViewModel.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -31,16 +32,52 @@ class ScenarioPage extends StatelessWidget {
           ),
         ),
         drawer: MyDrawer(model: DrawerViewModel()),
-        body: ScopedModelDescendant<ScenarioViewModel>(
-          builder: (context, child, scenarioModel) {
-            if (scenarioModel.isLoading == true) {
-              return LoadingScreen();
-            } else
-              return Padding(
-                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                child: getListScenario(context, scenarioModel),
-              );
-          },
+        body: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Column(
+            children: <Widget>[
+              ScopedModelDescendant<ScenarioViewModel>(
+                builder: (context, child, scenarioModel) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: scenarioModel.value,
+                      onChanged: (value) {
+                        scenarioModel.seacrhList(value);
+                      },
+                      decoration: InputDecoration(
+                          labelText: "Search",
+                          hintText: "Search Scenario",
+                          prefixIcon: Icon(Icons.search),
+                          border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(25.0)))),
+                    ),
+                  );
+                },
+              ),
+              ScopedModelDescendant<ScenarioViewModel>(
+                builder: (context, child, scenarioModel) {
+                  if (scenarioModel.isLoading == true) {
+                    return Expanded(
+                      child: LoadingScreen(),
+                    );
+                  } else if (scenarioModel.isLoading == false &&
+                      scenarioModel.isHave) {
+                    return Expanded(
+                      child: NotFoundScreen(),
+                    );
+                  } else {
+                    return Expanded(
+                        child: Padding(
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                      child: getListScenario(context, scenarioModel),
+                    ));
+                  }
+                },
+              ),
+            ],
+          ),
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: scenarioModel.currentIndex,
@@ -111,14 +148,14 @@ Widget _getScenarioUI(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
 //                  Text(index.toString()),
-                  Container(
-                    width: 260,
-                    child: Text(model.scenarioList[index].scName,
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red)),
-                  ),
+                    Container(
+                      width: 260,
+                      child: Text(model.scenarioList[index].scName,
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red)),
+                    ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
                       child: Container(
