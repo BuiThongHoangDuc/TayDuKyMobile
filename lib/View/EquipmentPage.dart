@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:mobiletayduky/Model/Destination.dart';
+import 'package:mobiletayduky/View/AddEquipmentPage.dart';
 import 'package:mobiletayduky/View/DrawerBar.dart';
 import 'package:mobiletayduky/View/LoadingScreen.dart';
 import 'package:mobiletayduky/View/NotFoundScreen.dart';
+import 'package:mobiletayduky/ViewModel/AddEquipmentViewModel.dart';
 import 'package:mobiletayduky/ViewModel/DrawerViewModel.dart';
 import 'package:mobiletayduky/ViewModel/EquipmentViewModel.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -91,6 +93,13 @@ class EquipmentPage extends StatelessWidget {
           selectedItemColor: Colors.blue,
           unselectedItemColor: Colors.black45,
           type: BottomNavigationBarType.fixed,
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AddEqupimentPage(addModel: AddEquipmentViewModel(),)))
+          },
+          tooltip: 'Add Equipment',
+          child: Icon(Icons.add),
         ),
       ),
     );

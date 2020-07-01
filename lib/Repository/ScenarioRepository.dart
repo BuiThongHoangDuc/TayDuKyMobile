@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 
 abstract class IScenarioRepository {
   Future<List<ScenarioBasicModel>> getScenarios();
+  Future<dynamic> addScenarios(String addScenarioJson);
   Future<List<ScenarioBasicModel>> searchScenarios(String search);
 }
 
@@ -47,4 +48,22 @@ class ScenarioRepository implements IScenarioRepository {
       return list;
     } else return list;
   }
+
+  @override
+  Future<dynamic> addScenarios(String addScenarioJson) async {
+    String apiSignIn = APIHelper.apiAddScenario();
+    Map<String, String> header = {
+      HttpHeaders.contentTypeHeader: "application/json",
+    };
+    http.Response response =
+        await http.post(apiSignIn, headers: header, body: addScenarioJson);
+    print(response.statusCode);
+    if (response.statusCode == 204) {
+      return "OK";
+    } else {
+      return "BadRequest";
+    }
+  }
+
+
 }

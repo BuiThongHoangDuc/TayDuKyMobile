@@ -6,6 +6,7 @@ import 'package:mobiletayduky/Model/EquipmentBasicModel.dart';
 import 'package:http/http.dart' as http;
 abstract class IEquipmentRepository {
   Future<List<EquipmentBasicModel>> getListEquipment();
+  Future<dynamic> addEquipment(String addEquipmentJson);
   Future<List<EquipmentBasicModel>> searchListEquipment(String eName);
 }
 
@@ -47,5 +48,21 @@ class EquipmentRepository implements IEquipmentRepository {
           .toList();
       return list;
     } else return list;
+  }
+
+  @override
+  Future addEquipment(String addEquipmentJson) async {
+    String apiSignIn = APIHelper.apiAddEquipment();
+    Map<String, String> header = {
+      HttpHeaders.contentTypeHeader: "application/json",
+    };
+    http.Response response =
+        await http.post(apiSignIn, headers: header, body: addEquipmentJson);
+    print(response.statusCode);
+    if (response.statusCode == 204) {
+      return "OK";
+    } else {
+      return "BadRequest";
+    }
   }
 }

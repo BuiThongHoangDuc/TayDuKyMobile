@@ -10,6 +10,7 @@ abstract class IUserRepository {
   Future<dynamic> signIn(String loginJson);
   Future<List<UserBasicModel>> getListUser();
   Future<List<UserBasicModel>> searchListUser(String userName);
+  Future<dynamic> addUser(String userName);
 }
 
 class UserRepository implements IUserRepository {
@@ -67,6 +68,22 @@ class UserRepository implements IUserRepository {
           .toList();
       return list;
     } else return list;
+  }
+
+  @override
+  Future<dynamic> addUser(String addUserJson) async {
+    String apiSignIn = APIHelper.apiAddUser();
+    Map<String, String> header = {
+      HttpHeaders.contentTypeHeader: "application/json",
+    };
+    http.Response response =
+        await http.post(apiSignIn, headers: header, body: addUserJson);
+    print(response.statusCode);
+    if (response.statusCode == 204) {
+      return "OK";
+    } else {
+      return "BadRequest";
+    }
   }
 
 }

@@ -72,9 +72,8 @@ class ScenarioViewModel extends Model {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => EquipmentPage(
-                    equipVM: EquipmentViewModel(),
-                  )));
+              builder: (context) =>
+                  EquipmentPage(equipVM: EquipmentViewModel())));
     }
   }
 }
