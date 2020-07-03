@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mobiletayduky/Model/ScenarioAddModel.dart';
 import 'package:mobiletayduky/Model/ScenarioBasicModel.dart';
+import 'package:mobiletayduky/Model/ScenarioEditModel.dart';
 import 'package:mobiletayduky/Repository/ScenarioRepository.dart';
 import 'package:mobiletayduky/View/ActorPage.dart';
+import 'package:mobiletayduky/View/EditScenarioPage.dart';
 import 'package:mobiletayduky/View/EquipmentPage.dart';
 import 'package:mobiletayduky/ViewModel/ActorViewModel.dart';
+import 'package:mobiletayduky/ViewModel/EditScenarioViewModel.dart';
 import 'package:mobiletayduky/ViewModel/EquipmentViewModel.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -74,6 +79,59 @@ class ScenarioViewModel extends Model {
           MaterialPageRoute(
               builder: (context) =>
                   EquipmentPage(equipVM: EquipmentViewModel())));
+    }
+  }
+
+  void deleteScenario(int index) async {
+    int deleteID = _scenarioList[index].scID;
+    String status = await _scenario.deleteScenario(deleteID);
+    getAll();
+    if (status == "OK") {
+      Fluttertoast.showToast(
+        msg: "Delete Scenario Success",
+        textColor: Colors.green,
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+      );
+    } else if (status == "Not Found") {
+      Fluttertoast.showToast(
+        msg: "Delete Scenario Fail",
+        textColor: Colors.red,
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+      );
+    } else {
+      Fluttertoast.showToast(
+        msg: "Some Thing Wrong With Serve",
+        textColor: Colors.red,
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+      );
+    }
+  }
+
+  void getDetailInfo(BuildContext context,int id) async {
+    ScenarioEditModel scenario = await _scenario.getScenariosByID(id);
+    if (scenario == null) {
+      Fluttertoast.showToast(
+        msg: "Is No Longer Available",
+        textColor: Colors.red,
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EditScenarioPage(
+            editModel: EditScenarioViewModel(scenario),
+          ),
+        ),
+      );
     }
   }
 }

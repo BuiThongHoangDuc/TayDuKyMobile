@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mobiletayduky/Model/Destination.dart';
 import 'package:mobiletayduky/View/AddScenarioPage.dart';
 import 'package:mobiletayduky/View/DrawerBar.dart';
+import 'package:mobiletayduky/View/EditScenarioPage.dart';
 import 'package:mobiletayduky/View/LoadingScreen.dart';
 import 'package:mobiletayduky/View/NotFoundScreen.dart';
 import 'package:mobiletayduky/ViewModel/AddScenarioViewModel.dart';
 import 'package:mobiletayduky/ViewModel/DrawerViewModel.dart';
+import 'package:mobiletayduky/ViewModel/EditScenarioViewModel.dart';
 import 'package:mobiletayduky/ViewModel/ScenarioViewModel.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -71,10 +74,11 @@ class ScenarioPage extends StatelessWidget {
                     );
                   } else {
                     return Expanded(
-                        child: Padding(
-                      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                      child: getListScenario(context, scenarioModel),
-                    ));
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                        child: getListScenario(context, scenarioModel),
+                      ),
+                    );
                   }
                 },
               ),
@@ -99,7 +103,12 @@ class ScenarioPage extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => AddScenarioPage(addModel: AddScenarioViewModel(),)))
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => AddScenarioPage(
+                          addModel: AddScenarioViewModel(),
+                        )))
           },
           tooltip: 'Add Scenario',
           child: Icon(Icons.add),
@@ -114,7 +123,21 @@ getListScenario(BuildContext context, ScenarioViewModel model) {
     scrollDirection: Axis.vertical,
     itemCount: model.scenarioList.length,
     itemBuilder: (context, index) {
-      return _getScenarioUI(context, index, model);
+      return Slidable(
+        actionPane: SlidableDrawerActionPane(),
+        actionExtentRatio: 0.5,
+        child: _getScenarioUI(context, index, model),
+        secondaryActions: <Widget>[
+          IconSlideAction(
+            caption: 'Delete',
+            color: Colors.red,
+            icon: Icons.delete,
+            onTap: () {
+              model.deleteScenario(index);
+            },
+          ),
+        ],
+      );
     },
     padding: EdgeInsets.all(0),
   );
@@ -129,7 +152,8 @@ Widget _getScenarioUI(
     elevation: 5,
     child: InkWell(
       onTap: () {
-        print(index.toString());
+        int scenarioId = model.scenarioList[index].scID;
+        model.getDetailInfo(context,scenarioId);
       },
       child: Container(
         height: 172,
@@ -200,7 +224,7 @@ Widget _getScenarioUI(
                       child: Container(
                         width: 260,
                         child: Text(
-                          model.scenarioList[index].scLocation,
+                          model.scenarioList[index].scDes,
 //                          overflow: TextOverflow.ellipsis,
 //                          maxLines: 3,
                           style: TextStyle(

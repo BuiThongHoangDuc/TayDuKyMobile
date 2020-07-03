@@ -1,37 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mobiletayduky/View/LoadingScreen.dart';
-import 'package:mobiletayduky/ViewModel/AddScenarioViewModel.dart';
+import 'package:mobiletayduky/ViewModel/EditScenarioViewModel.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class AddScenarioPage extends StatelessWidget {
-  final name = TextEditingController();
-  final location = TextEditingController();
-  final castTime = TextEditingController();
-  final des = TextEditingController();
+class EditScenarioPage extends StatelessWidget {
 
-  final AddScenarioViewModel addModel;
+  final EditScenarioViewModel editModel;
 
-  AddScenarioPage({this.addModel});
+  EditScenarioPage({this.editModel});
 
   Future<Null> _selectDateFrom(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: addModel.selectedDateFrom,
-        firstDate: DateTime.now(),
-        lastDate: addModel.limitedDateTo);
-    if (picked != null && picked != addModel.selectedDateFrom) {
-      addModel.selectedDateFrom = picked;
+    if(editModel.limitedDateTo == null) {
+      Fluttertoast.showToast(
+        msg: "Please Change Date To First",
+        textColor: Colors.red,
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+      );
+    }else {
+      final DateTime picked = await showDatePicker(
+          context: context,
+          initialDate: editModel.selectedDateFrom,
+          firstDate: DateTime.now(),
+          lastDate: editModel.limitedDateTo);
+      if (picked != null && picked != editModel.selectedDateFrom) {
+        editModel.selectedDateFrom = picked;
+      }
     }
   }
 
   Future<Null> _selectDateTo(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
-        initialDate: addModel.selectedDateTo,
-        firstDate: addModel.selectedDateFrom,
+        initialDate: editModel.selectedDateTo,
+        firstDate: editModel.selectedDateFrom,
         lastDate: DateTime(2101));
-    if (picked != null && picked != addModel.selectedDateTo) {
-      addModel.selectedDateTo = picked;
+    if (picked != null && picked != editModel.selectedDateTo) {
+      editModel.selectedDateTo = picked;
     }
   }
 
@@ -48,15 +55,15 @@ class AddScenarioPage extends StatelessWidget {
               child: SizedBox(
                 width: 180,
                 height: 180,
-                child: (addModel.image != null)
+                child: (editModel.image != null)
                     ? Image.file(
-                        addModel.image,
-                        fit: BoxFit.fill,
-                      )
+                  editModel.image,
+                  fit: BoxFit.fill,
+                )
                     : Image.network(
-                        addModel.defaultImage,
-                        fit: BoxFit.fill,
-                      ),
+                  editModel.defaultImage,
+                  fit: BoxFit.fill,
+                ),
               ),
             ),
           ),
@@ -70,7 +77,7 @@ class AddScenarioPage extends StatelessWidget {
                 size: 30,
               ),
               onPressed: () {
-                addModel.getMyImage();
+                editModel.getMyImage();
               },
             ),
           ),
@@ -83,12 +90,12 @@ class AddScenarioPage extends StatelessWidget {
     return ListTile(
       leading: const Icon(Icons.movie_filter),
       title: new TextField(
-        controller: name,
+        controller: editModel.nameControl,
         onChanged: (text) {
-          addModel.changeName(text);
+          editModel.changeName(text);
         },
         decoration: new InputDecoration(
-          errorText: addModel.name.error,
+          errorText: editModel.name.error,
           hintText: "Name",
         ),
       ),
@@ -99,12 +106,12 @@ class AddScenarioPage extends StatelessWidget {
     return ListTile(
       leading: const Icon(Icons.location_on),
       title: new TextField(
-        controller: location,
+        controller: editModel.locationControl,
         onChanged: (text) {
-          addModel.changeLocation(text);
+          editModel.changeLocation(text);
         },
         decoration: new InputDecoration(
-          errorText: addModel.location.error,
+          errorText: editModel.location.error,
           hintText: "Location",
         ),
       ),
@@ -115,13 +122,13 @@ class AddScenarioPage extends StatelessWidget {
     return ListTile(
       leading: const Icon(Icons.movie_creation),
       title: new TextField(
-        controller: castTime,
+        controller: editModel.castTimeControl,
         onChanged: (text) {
-          addModel.changeCastTime(text);
+          editModel.changeCastTime(text);
         },
         keyboardType: TextInputType.number,
         decoration: new InputDecoration(
-          errorText: addModel.castTime.error,
+          errorText: editModel.castTime.error,
           hintText: "Cast Time",
         ),
       ),
@@ -141,13 +148,13 @@ class AddScenarioPage extends StatelessWidget {
               scrollDirection: Axis.vertical,
               reverse: true,
               child: new TextField(
-                controller: des,
+                controller: editModel.desControl,
                 onChanged: (text) {
-                  addModel.changeComment(text);
+                  editModel.changeComment(text);
                 },
                 maxLines: null,
                 decoration: new InputDecoration(
-                  errorText: addModel.description.error,
+                  errorText: editModel.description.error,
                   hintText: "Description",
                 ),
               ),
@@ -174,7 +181,7 @@ class AddScenarioPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 new Text(
-                  addModel.selectedDateFromFormat,
+                  editModel.selectedDateFromFormat,
                 ),
                 new Icon(Icons.arrow_drop_down,
                     color: Theme.of(context).brightness == Brightness.light
@@ -202,7 +209,7 @@ class AddScenarioPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 new Text(
-                  addModel.selectedDateToFormat,
+                  editModel.selectedDateToFormat,
                 ),
                 new Icon(Icons.arrow_drop_down,
                     color: Theme.of(context).brightness == Brightness.light
@@ -216,22 +223,22 @@ class AddScenarioPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<AddScenarioViewModel>(
-      model: addModel,
+    return ScopedModel<EditScenarioViewModel>(
+      model: editModel,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text('Add Scenario'),
+          title: Text('Edit Scenario'),
           actions: <Widget>[
             InkWell(
               onTap: () {
-                addModel.addScenario(context);
+                editModel.editScenario();
               },
               child: Container(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
                   child: Text(
-                    'Add',
+                    'Save',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                 ),
@@ -239,9 +246,9 @@ class AddScenarioPage extends StatelessWidget {
             ),
           ],
         ),
-        body: ScopedModelDescendant<AddScenarioViewModel>(
-          builder: (context, child, addModel) {
-            if (addModel.isLoading == true)
+        body: ScopedModelDescendant<EditScenarioViewModel>(
+          builder: (context, child, editModel) {
+            if (editModel.isLoading == true)
               return LoadingScreen();
             else
               return Builder(

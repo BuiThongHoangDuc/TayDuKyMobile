@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mobiletayduky/Model/Destination.dart';
 import 'package:mobiletayduky/View/AddEquipmentPage.dart';
 import 'package:mobiletayduky/View/DrawerBar.dart';
@@ -111,7 +112,21 @@ Widget getListEquipment(BuildContext context, EquipmentViewModel equipVM) {
     scrollDirection: Axis.vertical,
     itemCount: equipVM.equipmentList.length,
     itemBuilder: (context, index) {
-      return _getEquipmentUI(context, index, equipVM);
+      return Slidable(
+        actionPane: SlidableDrawerActionPane(),
+        actionExtentRatio: 0.5,
+        child: _getEquipmentUI(context, index, equipVM),
+        secondaryActions: <Widget>[
+          IconSlideAction(
+            caption: 'Delete',
+            color: Colors.red,
+            icon: Icons.delete,
+            onTap: () {
+              equipVM.deleteEquipment(index);
+            },
+          ),
+        ],
+      );
     },
     padding: EdgeInsets.all(0),
   );
@@ -126,7 +141,8 @@ Widget _getEquipmentUI(
     elevation: 5,
     child: InkWell(
       onTap: () {
-        print(index.toString());
+        int id = equipVM.equipmentList[index].equipmentId;
+        equipVM.getEquipmentInfo(context,id);
       },
       child: Container(
         height: 100,

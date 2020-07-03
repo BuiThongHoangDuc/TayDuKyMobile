@@ -161,30 +161,6 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSignUpBtn() {
-    return GestureDetector(
-      onTap: () => print('Sign Up Press'),
-      child: RichText(
-        text: TextSpan(children: [
-          TextSpan(
-            text: 'Don\'t have an Account? ',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-            ),
-          ),
-          TextSpan(
-              text: 'SIGN UP',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              )),
-        ]),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return ScopedModel<LoginViewModel>(
@@ -237,7 +213,6 @@ class LoginPage extends StatelessWidget {
                           _buildPasswordEdt(),
                           SizedBox(height: 30),
                           _buildLoginBtn(context),
-                          _buildSignUpBtn(),
                         ],
                       ),
                     ),

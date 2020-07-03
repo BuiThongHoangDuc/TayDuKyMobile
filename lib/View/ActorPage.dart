@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mobiletayduky/Model/Destination.dart';
 import 'package:mobiletayduky/View/AddActorPage.dart';
 import 'package:mobiletayduky/View/DrawerBar.dart';
@@ -94,7 +95,12 @@ class ActorPage extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => AddActorPage(addModel: AddActorViewModel(),)))
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => AddActorPage(
+                          addModel: AddActorViewModel(),
+                        )))
           },
           tooltip: 'Add Actor',
           child: Icon(Icons.add),
@@ -108,13 +114,32 @@ Widget _buildList(BuildContext context, ActorViewModel actorVModel) {
   return ListView.builder(
     itemCount: actorVModel.userList.length,
     itemBuilder: (context, index) {
-      return ListTile(
-          title: Text(actorVModel.userList[index].userName),
-          subtitle: Text(actorVModel.userList[index].userEmail),
-          leading: CircleAvatar(
-            backgroundImage:
-                NetworkImage(actorVModel.userList[index].userImage),
-          ));
+      return Slidable(
+        actionPane: SlidableDrawerActionPane(),
+        actionExtentRatio: 0.5,
+        child: InkWell(
+            onTap: () {
+              int id = actorVModel.userList[index].userId;
+              actorVModel.getActorInfo(context, id);
+              },
+            child: ListTile(
+                title: Text(actorVModel.userList[index].userName),
+                subtitle: Text(actorVModel.userList[index].userEmail),
+                leading: CircleAvatar(
+                  backgroundImage:
+                      NetworkImage(actorVModel.userList[index].userImage),
+                ))),
+        secondaryActions: <Widget>[
+          IconSlideAction(
+            caption: 'Delete',
+            color: Colors.red,
+            icon: Icons.delete,
+            onTap: () {
+              actorVModel.deleteScenario(index);
+            },
+          ),
+        ],
+      );
     },
   );
 }

@@ -22,4 +22,17 @@ class ActorAddModel {
         "UserPassword": usPass,
         "UserAdress": usAddress
       };
+
+  factory ActorAddModel.fromJson(Map<String, dynamic> json) {
+    return ActorAddModel(
+      usID: json['userId'] as int,
+      usName: json['userName'] as String,
+      usImage: json['userImage'] as String,
+      usDes: json['userDescription'] as String,
+      usPhoneNum: json['userPhoneNum'] as String,
+      usEmail: json['userEmail'] as String,
+      usPass: json['userPassword'] as String,
+      usAddress: json['userAdress'] as String,
+    );
+  }
 }

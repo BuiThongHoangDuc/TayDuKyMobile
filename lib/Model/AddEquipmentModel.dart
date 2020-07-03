@@ -12,4 +12,14 @@ class AddEquipmentModel {
         "EquipmentImage": eqImage,
         "EquipmentQuantity": eqQuantity,
       };
+
+  factory AddEquipmentModel.fromJson(Map<String, dynamic> json) {
+    return AddEquipmentModel(
+      eqID: json['equipmentId'] as int,
+      eqName: json['equipmentName'] as String,
+      eqDes: json['equipmentDes'] as String,
+      eqImage: json['equipmentImage'] as String,
+      eqQuantity: json['equipmentQuantity'] as int,
+    );
+  }
 }

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mobiletayduky/Model/AddEquipmentModel.dart';
 import 'package:mobiletayduky/Model/EquipmentBasicModel.dart';
 import 'package:mobiletayduky/Repository/EquipmentRepository.dart';
 import 'package:mobiletayduky/View/ActorPage.dart';
+import 'package:mobiletayduky/View/EditEquipmentPage.dart';
 import 'package:mobiletayduky/View/ScenarioPage.dart';
 import 'package:mobiletayduky/ViewModel/ActorViewModel.dart';
+import 'package:mobiletayduky/ViewModel/EditEquipmentViewModel.dart';
 import 'package:mobiletayduky/ViewModel/ScenarioViewModel.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -74,6 +78,59 @@ class EquipmentViewModel extends Model {
                   )));
     } else {
       getAll();
+    }
+  }
+
+  void deleteEquipment(int index) async {
+    int deleteID = _equipmentList[index].equipmentId;
+    String status = await _equipment.deleteEquipment(deleteID);
+    getAll();
+    if (status == "OK") {
+      Fluttertoast.showToast(
+        msg: "Delete Scenario Success",
+        textColor: Colors.green,
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+      );
+    } else if (status == "Not Found") {
+      Fluttertoast.showToast(
+        msg: "Delete Scenario Fail",
+        textColor: Colors.red,
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+      );
+    } else {
+      Fluttertoast.showToast(
+        msg: "Some Thing Wrong With Serve",
+        textColor: Colors.red,
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+      );
+    }
+  }
+
+  void getEquipmentInfo(BuildContext context,int id) async {
+    AddEquipmentModel equipment = await _equipment.getEquipmentsByID(id);
+    if (equipment == null) {
+      Fluttertoast.showToast(
+        msg: "Is No Longer Available",
+        textColor: Colors.red,
+        toastLength: Toast.LENGTH_SHORT,
+        backgroundColor: Colors.white,
+        gravity: ToastGravity.CENTER,
+      );
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EditEqupimentPage(
+            editModel: EditEquipmentViewModel(equipment),
+          ),
+        ),
+      );
     }
   }
 
