@@ -1,5 +1,11 @@
 class ScenarioEditModel {
-  final String scName, scDes, scLocation, scImage, scTimeFrom, scTimeTo;
+  final String scName,
+      scDes,
+      scLocation,
+      scImage,
+      scTimeFrom,
+      scTimeTo,
+      scScript;
   final int scCastAmout, scId, scStatus;
 
   ScenarioEditModel(
@@ -11,7 +17,8 @@ class ScenarioEditModel {
       this.scDes,
       this.scTimeFrom,
       this.scTimeTo,
-      this.scStatus});
+      this.scStatus,
+      this.scScript});
 
   Map<String, dynamic> toJson() => {
         "ScenarioId": scId,
@@ -22,6 +29,7 @@ class ScenarioEditModel {
         "ScenarioTimeTo": scTimeTo,
         "ScenarioCastAmout": scCastAmout,
         "ScenarioImage": scImage,
+        "ScenarioScript": scScript,
       };
 
   factory ScenarioEditModel.fromJson(Map<String, dynamic> json) {
@@ -35,6 +43,7 @@ class ScenarioEditModel {
       scCastAmout: json['scenarioCastAmout'] as int,
       scStatus: json['scenarioStatus'] as int,
       scImage: json['scenarioImage'] as String,
+      scScript: json['scenarioScript'] as String,
     );
   }
 }

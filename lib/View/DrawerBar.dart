@@ -22,7 +22,8 @@ class MyDrawer extends StatelessWidget {
                       accountEmail: Text(model.userEmail),
                       currentAccountPicture: new CircleAvatar(
                         backgroundColor: Colors.brown,
-                        child: Text("P"),
+                        backgroundImage:
+                        NetworkImage(model.userImage),
                       )),
                   ListTile(
                     leading: Icon(Icons.person),

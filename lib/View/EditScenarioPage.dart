@@ -193,6 +193,36 @@ class EditScenarioPage extends StatelessWidget {
         ));
   }
 
+  Widget _buildFileScript(BuildContext context) {
+    return ListTile(
+        leading: const Icon(Icons.attach_file),
+        title: new InputDecorator(
+          decoration: InputDecoration(
+            labelText: 'Script Scenario',
+          ),
+          child: InkWell(
+            onTap: () {
+              editModel.getFile();
+            },
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Expanded(
+                    child: new Text(
+                      editModel.isHasScript,
+                    )),
+                new Icon(Icons.edit,
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.grey.shade700
+                        : Colors.white70),
+              ],
+            ),
+          ),
+        ));
+  }
+
+
   Widget _buildDateToField(BuildContext context) {
     return ListTile(
         leading: const Icon(Icons.calendar_today),
@@ -269,6 +299,7 @@ class EditScenarioPage extends StatelessWidget {
                           _buildDateFromField(context),
                           _buildDateToField(context),
                           _buildDesField(),
+                          _buildFileScript(context),
                         ],
                       ),
                     ),

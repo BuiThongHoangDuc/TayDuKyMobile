@@ -22,9 +22,11 @@ class DrawerViewModel extends Model {
   void signOut(BuildContext context) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => LoginPage(LoginViewModel())),
-    );
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginPage(LoginViewModel()),
+        ),
+        (Route<dynamic> route) => false);
   }
 }

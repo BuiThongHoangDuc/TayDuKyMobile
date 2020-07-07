@@ -14,6 +14,7 @@ abstract class IUserRepository {
   Future<dynamic> addUser(String userName);
   Future<dynamic> deleteActor(int id);
   Future<ActorAddModel> getActorByID(int id);
+  Future<dynamic> editActor(int id, String editActorJson);
 }
 
 class UserRepository implements IUserRepository {
@@ -122,6 +123,26 @@ class UserRepository implements IUserRepository {
     } else
       print(actor);
     return actor;
+  }
+
+  @override
+  Future editActor(int id, String editActorJson) async {
+    String urlAPI = APIHelper.apiProject();
+    Map<String, String> header = {
+      HttpHeaders.contentTypeHeader: "application/json",
+    };
+    var uri = Uri.http(urlAPI, "/api/Users/$id");
+    http.Response response =
+        await http.put(uri, headers: header, body: editActorJson);
+    print(response.body);
+    if (response.statusCode == 200) {
+      int idActor = json.decode(response.body);
+      return idActor;
+    } else if (response.statusCode == 404) {
+      return "Not Found";
+    } else {
+      return "ERROR Database";
+    }
   }
 
 }

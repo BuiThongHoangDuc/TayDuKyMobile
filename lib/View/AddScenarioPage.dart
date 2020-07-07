@@ -214,6 +214,35 @@ class AddScenarioPage extends StatelessWidget {
         ));
   }
 
+  Widget _buildFileScript(BuildContext context) {
+    return ListTile(
+        leading: const Icon(Icons.attach_file),
+        title: new InputDecorator(
+          decoration: InputDecoration(
+            labelText: 'Script Scenario',
+          ),
+          child: InkWell(
+            onTap: () {
+              addModel.getFile();
+            },
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Expanded(
+                    child: new Text(
+                  addModel.scriptString,
+                )),
+                new Icon(Icons.edit,
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.grey.shade700
+                        : Colors.white70),
+              ],
+            ),
+          ),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModel<AddScenarioViewModel>(
@@ -262,6 +291,7 @@ class AddScenarioPage extends StatelessWidget {
                           _buildDateFromField(context),
                           _buildDateToField(context),
                           _buildDesField(),
+                          _buildFileScript(context),
                         ],
                       ),
                     ),

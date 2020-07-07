@@ -1,5 +1,5 @@
 class ScenarioAddModel {
-  final String scName, scDes, scLocation, scImage,scTimeFrom, scTimeTo;
+  final String scName, scDes, scLocation, scImage,scTimeFrom, scTimeTo,scScript;
   final int scCastAmout, scId;
 
   ScenarioAddModel(
@@ -10,7 +10,8 @@ class ScenarioAddModel {
       this.scCastAmout,
       this.scDes,
       this.scTimeFrom,
-      this.scTimeTo});
+      this.scTimeTo,
+      this.scScript});
 
   Map<String, dynamic> toJson() => {
         "ScenarioId": scId,
@@ -20,6 +21,7 @@ class ScenarioAddModel {
         "ScenarioTimeFrom": scTimeFrom,
         "ScenarioTimeTo": scTimeTo,
         "ScenarioCastAmout": scCastAmout,
-        "ScenarioImage": scImage
+        "ScenarioImage": scImage,
+        "ScenarioScript": scScript,
       };
 }

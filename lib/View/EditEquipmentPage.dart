@@ -127,7 +127,7 @@ class EditEqupimentPage extends StatelessWidget {
           actions: <Widget>[
             InkWell(
               onTap: () {
-//                editModel.addEquipment(context);
+                editModel.editEquipment();
               },
               child: Container(
                 child: Padding(

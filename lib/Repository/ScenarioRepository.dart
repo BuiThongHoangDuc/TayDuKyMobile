@@ -17,6 +17,8 @@ abstract class IScenarioRepository {
   Future<dynamic> deleteScenario(int id);
 
   Future<ScenarioEditModel> getScenariosByID(int id);
+
+  Future<dynamic> editScenario(int id, String editScenarioJson);
 }
 
 class ScenarioRepository implements IScenarioRepository {
@@ -98,12 +100,30 @@ class ScenarioRepository implements IScenarioRepository {
     http.Response response = await http.get(uri, headers: header);
     ScenarioEditModel scenario;
     if (response.statusCode == 200) {
-      Map<String, dynamic> sc =json.decode(response.body);
+      Map<String, dynamic> sc = json.decode(response.body);
       scenario = ScenarioEditModel.fromJson(sc);
       return scenario;
     } else
       return scenario;
   }
 
-
+  @override
+  Future<dynamic> editScenario(int id, String editScenarioJson) async {
+    String urlAPI = APIHelper.apiProject();
+    Map<String, String> header = {
+      HttpHeaders.contentTypeHeader: "application/json",
+    };
+    var uri = Uri.http(urlAPI, "/api/Scenarios/$id");
+    http.Response response =
+        await http.put(uri, headers: header, body: editScenarioJson);
+    print(response.body);
+    if (response.statusCode == 200) {
+      int idScenario = json.decode(response.body);
+      return idScenario;
+    } else if (response.statusCode == 404) {
+      return "Not Found";
+    } else {
+      return "ERROR Database";
+    }
+  }
 }

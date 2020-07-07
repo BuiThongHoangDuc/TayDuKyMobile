@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
@@ -18,11 +18,16 @@ class AddScenarioViewModel extends Model {
   final ScenarioRepository scenarioRepo = new ScenarioRepository();
   ScenarioAddModel _addModel;
   File _image;
+  File _script;
 
+  File get script => _script;
   File get image => _image;
+
   String _defaultImage =
       'https://firebasestorage.googleapis.com/v0/b/journey-to-the-west-3db0d.appspot.com/o/noimage.jpg?alt=media&token=e1a3652f-3c98-4230-a6c9-e4e5b1fac69a';
+  String _scriptString = "Select File";
 
+  String get scriptString => _scriptString;
   String get defaultImage => _defaultImage;
 
   bool _isLoading = false;
@@ -167,7 +172,12 @@ class AddScenarioViewModel extends Model {
         nowImage = url.toString();
       } else
         nowImage = defaultImage;
-
+      String urlLink;
+      if(_script != null) {
+        var urlScript = await upLoadFile();
+        urlLink = urlScript.toString();
+      }
+      else urlLink = null;
       _addModel = new ScenarioAddModel(
           scId: 0,
           scName: name.value,
@@ -176,8 +186,8 @@ class AddScenarioViewModel extends Model {
           scLocation: location.value,
           scImage: nowImage,
           scTimeFrom: _selectedDateFrom.toString(),
-          scTimeTo: _selectedDateTo.toString());
-
+          scTimeTo: _selectedDateTo.toString(),
+          scScript: urlLink);
       String addScenarioJson = jsonEncode(_addModel.toJson());
       String status = await scenarioRepo.addScenarios(addScenarioJson);
       if (status == "BadRequest") {
@@ -218,4 +228,21 @@ class AddScenarioViewModel extends Model {
     String url = await reference.getDownloadURL();
     return url;
   }
+
+  Future getFile() async {
+    var file = await FilePicker.getFile(allowedExtensions: ['txt', 'pdf', 'doc', 'docx'], type: FileType.custom);
+    _script = File(file.path);
+    _scriptString = path.basename(_script.path);
+    notifyListeners();
+  }
+
+  Future<String> upLoadFile() async {
+    String basename = path.basename(_script.path);
+    StorageReference reference = FirebaseStorage.instance.ref().child(basename);
+    StorageUploadTask uploadTask = reference.putFile(_script);
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    String url = await reference.getDownloadURL();
+    return url;
+  }
+
 }

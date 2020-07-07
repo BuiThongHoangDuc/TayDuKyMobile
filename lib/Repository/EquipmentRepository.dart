@@ -11,6 +11,7 @@ abstract class IEquipmentRepository {
   Future<List<EquipmentBasicModel>> searchListEquipment(String eName);
   Future<dynamic> deleteEquipment(int id);
   Future<AddEquipmentModel> getEquipmentsByID(int id);
+  Future<dynamic> editEquipment(int id, String editEquipmentJson);
 }
 
 class EquipmentRepository implements IEquipmentRepository {
@@ -100,6 +101,26 @@ class EquipmentRepository implements IEquipmentRepository {
       return equipment;
     } else
       return equipment;
+  }
+
+  @override
+  Future editEquipment(int id, String editEquipmentJson) async {
+    String urlAPI = APIHelper.apiProject();
+    Map<String, String> header = {
+      HttpHeaders.contentTypeHeader: "application/json",
+    };
+    var uri = Uri.http(urlAPI, "/api/Equipments/$id");
+    http.Response response =
+        await http.put(uri, headers: header, body: editEquipmentJson);
+    print(response.body);
+    if (response.statusCode == 200) {
+      int idEquipment = json.decode(response.body);
+      return idEquipment;
+    } else if (response.statusCode == 404) {
+      return "Not Found";
+    } else {
+      return "ERROR Database";
+    }
   }
 
 }
