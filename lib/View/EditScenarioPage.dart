@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mobiletayduky/View/ListActorInScenarioPage.dart';
 import 'package:mobiletayduky/View/LoadingScreen.dart';
 import 'package:mobiletayduky/ViewModel/EditScenarioViewModel.dart';
+import 'package:mobiletayduky/ViewModel/ListActorInScenarioVM.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class EditScenarioPage extends StatelessWidget {
-
   final EditScenarioViewModel editModel;
 
   EditScenarioPage({this.editModel});
 
   Future<Null> _selectDateFrom(BuildContext context) async {
-    if(editModel.limitedDateTo == null) {
+    if (editModel.limitedDateTo == null) {
       Fluttertoast.showToast(
         msg: "Please Change Date To First",
         textColor: Colors.red,
@@ -19,7 +20,7 @@ class EditScenarioPage extends StatelessWidget {
         backgroundColor: Colors.white,
         gravity: ToastGravity.CENTER,
       );
-    }else {
+    } else {
       final DateTime picked = await showDatePicker(
           context: context,
           initialDate: editModel.selectedDateFrom,
@@ -57,13 +58,13 @@ class EditScenarioPage extends StatelessWidget {
                 height: 180,
                 child: (editModel.image != null)
                     ? Image.file(
-                  editModel.image,
-                  fit: BoxFit.fill,
-                )
+                        editModel.image,
+                        fit: BoxFit.fill,
+                      )
                     : Image.network(
-                  editModel.defaultImage,
-                  fit: BoxFit.fill,
-                ),
+                        editModel.defaultImage,
+                        fit: BoxFit.fill,
+                      ),
               ),
             ),
           ),
@@ -210,8 +211,8 @@ class EditScenarioPage extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                     child: new Text(
-                      editModel.isHasScript,
-                    )),
+                  editModel.isHasScript,
+                )),
                 new Icon(Icons.edit,
                     color: Theme.of(context).brightness == Brightness.light
                         ? Colors.grey.shade700
@@ -221,7 +222,6 @@ class EditScenarioPage extends StatelessWidget {
           ),
         ));
   }
-
 
   Widget _buildDateToField(BuildContext context) {
     return ListTile(
@@ -249,6 +249,55 @@ class EditScenarioPage extends StatelessWidget {
             ),
           ),
         ));
+  }
+
+  Widget _buildBtnListActor(BuildContext context) {
+    return RaisedButton(
+      onPressed: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ListActorInScenarioPage(aicVM: ListActorInScenarioVM(),)));
+      },
+      textColor: Colors.white,
+      padding: const EdgeInsets.all(0.0),
+      child: Container(
+          width: 170,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: <Color>[
+                Color(0xFF0D47A1),
+                Color(0xFF1976D2),
+                Color(0xFF42A5F5),
+              ],
+            ),
+          ),
+          padding: const EdgeInsets.all(10.0),
+          child: Center(
+            child: Text('List Actor', style: TextStyle(fontSize: 20)),
+          )),
+    );
+  }
+
+  Widget _buildBtnListEquipment(BuildContext context) {
+    return RaisedButton(
+      onPressed: () {},
+      textColor: Colors.white,
+      padding: const EdgeInsets.all(0.0),
+      child: Container(
+        width: 170,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: <Color>[
+              Color(0xFF0D47A1),
+              Color(0xFF1976D2),
+              Color(0xFF42A5F5),
+            ],
+          ),
+        ),
+        padding: const EdgeInsets.all(10.0),
+        child: Center(
+          child: Text('List Equipment', style: TextStyle(fontSize: 20)),
+        ),
+      ),
+    );
   }
 
   @override
@@ -300,6 +349,15 @@ class EditScenarioPage extends StatelessWidget {
                           _buildDateToField(context),
                           _buildDesField(),
                           _buildFileScript(context),
+                          SizedBox(height: 30),
+                          Row(
+                            children: <Widget>[
+                              SizedBox(width: 20),
+                              _buildBtnListActor(context),
+                              SizedBox(width: 20),
+                              _buildBtnListEquipment(context),
+                            ],
+                          ),
                         ],
                       ),
                     ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobiletayduky/View/AddActorToScenarioPage.dart';
 import 'package:mobiletayduky/View/AddScenarioPage.dart';
 import 'package:mobiletayduky/View/LoginPage.dart';
+import 'package:mobiletayduky/ViewModel/AddActorToScenarioVM.dart';
 import 'package:mobiletayduky/ViewModel/AddScenarioViewModel.dart';
 import 'package:mobiletayduky/ViewModel/LoginViewModel.dart';
 
@@ -10,7 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp (
       debugShowCheckedModeBanner: false,
       home: LoginPage(LoginViewModel())
-//      home: AddScenarioPage(addModel: AddScenarioViewModel(),),
+//      home: AddActorToScenarioPage(addModel: AddActorToScenarioVM(),),
     );
   }
 }
