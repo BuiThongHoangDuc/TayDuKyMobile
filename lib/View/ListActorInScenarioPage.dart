@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
+import 'package:mobiletayduky/View/AddActorToScenarioPage.dart';
 import 'package:mobiletayduky/View/LoadingScreen.dart';
 import 'package:mobiletayduky/View/NotFoundScreen.dart';
+import 'package:mobiletayduky/ViewModel/AddActorToScenarioVM.dart';
+import 'package:mobiletayduky/ViewModel/DetailActorToScenarioVM.dart';
 import 'package:mobiletayduky/ViewModel/ListActorInScenarioVM.dart';
 import 'package:scoped_model/scoped_model.dart';
+
+import 'DetailActorInScenarioPage.dart';
 
 class ListActorInScenarioPage extends StatelessWidget {
   final ListActorInScenarioVM aicVM;
@@ -21,26 +28,28 @@ class ListActorInScenarioPage extends StatelessWidget {
         body: GestureDetector(
           child: ScopedModelDescendant<ListActorInScenarioVM>(
             builder: (context, child, aicVM) {
-//              if (equipVM.isLoading == true) {
-//                return Expanded(
-//                  child: LoadingScreen(),
-//                );
-//              } else if (equipVM.isLoading == false && equipVM.isHave) {
-//                return Expanded(
-//                  child: NotFoundScreen(),
-//                );
-//              } else
-
-              return Padding(
-                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                child: getListAIC(context, aicVM),
-              );
+              if (aicVM.isLoading == true) {
+                return LoadingScreen();
+              } else if (aicVM.isLoading == false && aicVM.isHave) {
+                return NotFoundScreen();
+              } else
+                return Padding(
+                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                  child: getListAIC(context, aicVM),
+                );
             },
           ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => {
-//            Navigator.push(context, MaterialPageRoute(builder: (context) => AddEqupimentPage(addModel: AddEquipmentViewModel(),)))
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddActorToScenarioPage(
+                  addModel: AddActorToScenarioVM(aicVM.scenarioID),
+                ),
+              ),
+            ).then((value) => aicVM.getAll()),
           },
           tooltip: 'Add Actor In Scenario',
           child: Icon(Icons.add),
@@ -53,9 +62,24 @@ class ListActorInScenarioPage extends StatelessWidget {
 Widget getListAIC(BuildContext context, ListActorInScenarioVM aicVM) {
   return ListView.builder(
       scrollDirection: Axis.vertical,
-      itemCount: 5,
+      itemCount: aicVM.listActorInSc.length,
       itemBuilder: (context, index) {
-        return _getAICUI(context, index, aicVM);
+        return Slidable(
+          actionPane: SlidableDrawerActionPane(),
+          actionExtentRatio: 0.3,
+          child: _getAICUI(context, index, aicVM),
+          secondaryActions: <Widget>[
+            IconSlideAction(
+              caption: 'Delete',
+              color: Colors.red,
+              icon: Icons.delete,
+              onTap: () {
+                aicVM.deleteAIS(index);
+              },
+            ),
+          ],
+        );
+        ;
       });
 }
 
@@ -67,11 +91,11 @@ Widget _getAICUI(BuildContext context, int index, ListActorInScenarioVM aicVM) {
     elevation: 5,
     child: InkWell(
       onTap: () {
-//        int id = equipVM.equipmentList[index].equipmentId;
-//        equipVM.getEquipmentInfo(context, id);
+      int id = aicVM.listActorInSc[index].actorRoleId;
+      aicVM.getDetailInfo(context,id);
       },
       child: Container(
-        height: 170,
+        height: 180,
         child: Container(
           height: 150,
           child: Padding(
@@ -79,8 +103,7 @@ Widget _getAICUI(BuildContext context, int index, ListActorInScenarioVM aicVM) {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                    "Hello Fucker",
+                Text(aicVM.listActorInSc[index].actorInScenario,
                     style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -97,8 +120,8 @@ Widget _getAICUI(BuildContext context, int index, ListActorInScenarioVM aicVM) {
                               fontWeight: FontWeight.bold,
                               color: Colors.black)),
                       Text(
-                        "Wu Kong aslkjdlkas qoiwuejoi aslkjdlkc",
-                        style: TextStyle(color: Colors.black,fontSize: 15),
+                        aicVM.listActorInSc[index].actorEmail,
+                        style: TextStyle(color: Colors.black, fontSize: 15),
                       ),
                     ],
                   ),
@@ -115,7 +138,7 @@ Widget _getAICUI(BuildContext context, int index, ListActorInScenarioVM aicVM) {
                               fontWeight: FontWeight.bold,
                               color: Colors.red)),
                       Text(
-                        "Wu Kong aslkjdlkas qoiwuejoi aslkjdlkc",
+                        aicVM.listActorInSc[index].roleScenarioId,
                         style: TextStyle(color: Colors.black),
                       ),
                     ],
@@ -123,15 +146,40 @@ Widget _getAICUI(BuildContext context, int index, ListActorInScenarioVM aicVM) {
                 ),
                 SizedBox(height: 10),
                 Padding(
-                  padding: EdgeInsets.fromLTRB(0, 5, 0, 2),
-                  child: Container(
-                    child: Text(
-                      "Some Thing To Do",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                      style: TextStyle(
-                          fontSize: 13, color: Color.fromARGB(255, 48, 48, 54)),
-                    ),
+                  padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
+                  child: Row(
+                    children: <Widget>[
+                      Text('Person ADD: ',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black)),
+                      Text(
+                        aicVM.listActorInSc[index].admin,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.access_time,
+                        size: 16,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        DateFormat('yyyy-MM-dd').format(DateTime.parse(
+                            aicVM.listActorInSc[index].dateUpdate)),
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
                   ),
                 ),
               ],

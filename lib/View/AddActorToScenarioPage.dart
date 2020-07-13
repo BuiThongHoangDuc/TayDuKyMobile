@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:mobiletayduky/ViewModel/AddActorToScenarioVM.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import 'LoadingScreen.dart';
+
 class AddActorToScenarioPage extends StatelessWidget {
   final AddActorToScenarioVM addModel;
 
@@ -19,7 +21,7 @@ class AddActorToScenarioPage extends StatelessWidget {
           actions: <Widget>[
             InkWell(
               onTap: () {
-                addModel.addActortoScenario();
+                addModel.addActortoScenario(context);
               },
               child: Container(
                 child: Padding(
@@ -35,9 +37,9 @@ class AddActorToScenarioPage extends StatelessWidget {
         ),
         body: ScopedModelDescendant<AddActorToScenarioVM>(
           builder: (context, child, addModel) {
-//            if (addModel.isLoading == true)
-//              return LoadingScreen();
-//            else
+            if (addModel.isLoading == true)
+              return LoadingScreen();
+            else
             return Builder(
               builder: (context) => Container(
                 child: GestureDetector(
@@ -53,13 +55,9 @@ class AddActorToScenarioPage extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               _actorField(addModel),
-                              _scenarioField(addModel)
+                              _roleInScenarioField(addModel),
                             ],
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          _roleInScenarioField(addModel),
                           SizedBox(
                             height: 10,
                           ),
@@ -139,7 +137,7 @@ Widget _actorField(AddActorToScenarioVM addModel) {
           child: DropdownButtonHideUnderline(
             child: DropdownButton(
               isExpanded: true,
-              hint: Text("Select Actor"),
+              hint: (addModel.emailUser != null) ? Text("Select Actor") : Text("No Actor To Select"),
               value: addModel.selectedActor,
               icon: Icon(Icons.arrow_drop_down),
               iconSize: 24,
@@ -172,68 +170,6 @@ Widget _actorField(AddActorToScenarioVM addModel) {
   );
 }
 
-Widget _scenarioField(AddActorToScenarioVM addModel) {
-  return Column(
-    children: <Widget>[
-      Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          "Scenario ",
-          style: TextStyle(
-              fontFamily: "Arial",
-              color: Colors.blue,
-              fontSize: 17,
-              fontWeight: FontWeight.bold),
-        ),
-      ),
-      Align(
-        alignment: Alignment.centerLeft,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border(
-              bottom: BorderSide(
-                color: Colors.blue,
-                width: 3.0,
-              ),
-            ),
-          ),
-          width: 150,
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton(
-              isExpanded: true,
-              hint: Text("Select Scenario"),
-              value: addModel.selectedScenario,
-              icon: Icon(Icons.arrow_drop_down),
-              iconSize: 24,
-              elevation: 16,
-              style: TextStyle(color: Colors.black),
-              underline: Container(
-                height: 2,
-                color: Colors.blue,
-              ),
-              onChanged: (String newValue) {
-                addModel.changeSelectedScenario(newValue);
-              },
-              items: addModel.scenarioName
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-          ),
-        ),
-      ),
-      SizedBox(height: 10.0),
-      Text(
-        addModel.errorScenario,
-        style: TextStyle(fontFamily: "Arial", color: Colors.red),
-      ),
-    ],
-  );
-}
-
 Widget _roleInScenarioField(AddActorToScenarioVM addModel) {
   return Column(
     children: <Widget>[
@@ -257,9 +193,10 @@ Widget _roleInScenarioField(AddActorToScenarioVM addModel) {
         width: 150,
         child: DropdownButtonHideUnderline(
           child: DropdownButton(
+
             isExpanded: true,
             hint: Text("Select Role"),
-            value: addModel.selectedScenario,
+            value: addModel.selectedRole,
             icon: Icon(Icons.arrow_drop_down),
             iconSize: 24,
             elevation: 16,
@@ -269,9 +206,9 @@ Widget _roleInScenarioField(AddActorToScenarioVM addModel) {
               color: Colors.blue,
             ),
             onChanged: (String newValue) {
-              addModel.changeSelectedScenario(newValue);
+              addModel.changeSelectedRole(newValue);
             },
-            items: addModel.scenarioName
+            items: addModel.roleName
                 .map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
@@ -283,7 +220,7 @@ Widget _roleInScenarioField(AddActorToScenarioVM addModel) {
       ),
       SizedBox(height: 10.0),
       Text(
-        addModel.errorScenario,
+        addModel.errorRole,
         style: TextStyle(fontFamily: "Arial", color: Colors.red),
       ),
     ],

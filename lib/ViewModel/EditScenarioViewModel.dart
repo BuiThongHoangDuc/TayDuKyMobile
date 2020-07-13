@@ -15,12 +15,17 @@ import 'package:path/path.dart' as path;
 
 class EditScenarioViewModel extends Model {
   ScenarioEditModel _scenario;
+
   final IScenarioRepository scenarioRepo = new ScenarioRepository();
 
   EditScenarioViewModel(ScenarioEditModel scenario) {
     this._scenario = scenario;
+    _scenarioID = _scenario.scId;
     getScenarioInfo();
   }
+
+  int _scenarioID;
+  int get scenarioID => _scenarioID;
 
   TextEditingController _nameControl = new TextEditingController();
   TextEditingController _locationControl = new TextEditingController();

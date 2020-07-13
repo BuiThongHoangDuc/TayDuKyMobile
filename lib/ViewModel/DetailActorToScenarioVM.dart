@@ -1,21 +1,16 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:mobiletayduky/Helper/Validate.dart';
 import 'package:mobiletayduky/Model/AddActorToScenarioModel.dart';
+import 'package:mobiletayduky/Model/EditActorToScenarioModel.dart';
 import 'package:mobiletayduky/Model/RoleModel.dart';
-import 'package:mobiletayduky/Model/ScenarioBasicModel.dart';
 import 'package:mobiletayduky/Model/UserBasicModel.dart';
 import 'package:mobiletayduky/Repository/RoleScenarioRepository.dart';
-import 'package:mobiletayduky/Repository/ScenarioRepository.dart';
 import 'package:mobiletayduky/Repository/UserRepository.dart';
-import 'package:mobiletayduky/View/ListActorInScenarioPage.dart';
-import 'package:mobiletayduky/ViewModel/ListActorInScenarioVM.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AddActorToScenarioVM extends Model {
+class DetailActorToScenarioVM extends Model {
   final IUserRepository _user = UserRepository();
   List<UserBasicModel> _userList;
 
@@ -81,8 +76,6 @@ class AddActorToScenarioVM extends Model {
 
   int _scenarioID;
 
-  final IScenarioRepository addRepo = new ScenarioRepository();
-
   void changeSelectedActor(String newValue) {
     _selectedActor = newValue;
     _idActor = _userList[_emailUser.indexOf(newValue)].userId;
@@ -110,9 +103,15 @@ class AddActorToScenarioVM extends Model {
     notifyListeners();
   }
 
-  AddActorToScenarioVM(int scenarioID) {
+  TextEditingController descriptionControl = TextEditingController();
+  TextEditingController latestDateControl = TextEditingController();
+  TextEditingController personUpdateControl = TextEditingController();
+
+  EditActorToScenarioModel _atsModel;
+
+  DetailActorToScenarioVM(EditActorToScenarioModel atsModel) {
+    _atsModel = atsModel;
     getAll();
-    this._scenarioID = scenarioID;
   }
 
   void getAll() async {
@@ -146,82 +145,28 @@ class AddActorToScenarioVM extends Model {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     _userId = prefs.getInt("usId");
 
-    notifyListeners();
-  }
-
-  void addActortoScenario(BuildContext context) async {
-    print(_selectedRole);
-    print(_selectedActor);
-    _isReady = true;
-    if (_selectedActor == null) {
-      _isReady = false;
-      _errorActor = "Select Actor Please";
-    }
-    if (_selectedRole == null) {
-      _isReady = false;
-      _errorRole = "Select Role Please";
-    }
-    if (_description.value == null) {
-      changeComment("");
-      _isReady = false;
-    }
-
-    notifyListeners();
-    if (_isReady) {
-      _isLoading = true;
-      notifyListeners();
-
-      _addModel = new AddActorToScenarioModel(
-          actorInScenario: _idActor,
-          actorRoleDescription: _description.value,
-          actorRoleId: 0,
-          dateUpdate: DateTime.now().toString(),
-          roleScenarioId: _idRole,
-          scenarioId: _scenarioID,
-          admin: _userId);
-
-      String addActorToScenarioJson = jsonEncode(_addModel.toJson());
-      print(addActorToScenarioJson);
-
-      String status =
-          await addRepo.addActorToScenario(_scenarioID, addActorToScenarioJson);
-
-      if (status == "Ok") {
-        Navigator.of(context).pop();
-        Fluttertoast.showToast(
-          msg: "Add Actor To Scenario Success",
-          textColor: Colors.green,
-          toastLength: Toast.LENGTH_SHORT,
-          backgroundColor: Colors.white,
-          gravity: ToastGravity.CENTER,
-        );
-      } else if(status == "Conflict"){
-        _isReady = false;
-        _errorActor = "Change Another Actor";
-
-        _isLoading = false;
-        _isReady = false;
-        _errorRole = "Change Another Role";
-        Fluttertoast.showToast(
-          msg: "Add Actor Fail",
-          textColor: Colors.red,
-          toastLength: Toast.LENGTH_SHORT,
-          backgroundColor: Colors.white,
-          gravity: ToastGravity.CENTER,
-        );
-        notifyListeners();
+    _roleList.forEach((element) {
+      if (element.roleScenarioId == _atsModel.roleScenarioId) {
+        _idRole = element.roleScenarioId;
+        _selectedRole = element.roleScenarioName;
       }
-      else{
-        _isLoading = false;
-        Fluttertoast.showToast(
-          msg: "Add Actor Fail",
-          textColor: Colors.red,
-          toastLength: Toast.LENGTH_SHORT,
-          backgroundColor: Colors.white,
-          gravity: ToastGravity.CENTER,
-        );
-        notifyListeners();
+    });
+    _userList.forEach((element) {
+      if (element.userId == _atsModel.actorInScenario) {
+        _idActor = element.userId;
+        _selectedActor = element.userEmail;
+        _nameActor = element.userName;
       }
-    }
+    });
+
+    descriptionControl.text = _atsModel.actorRoleDescription;
+    _description = Validate(_atsModel.actorRoleDescription, null);
+    latestDateControl.text =
+        DateFormat('yyyy-MM-dd').format(DateTime.parse(_atsModel.dateUpdate));
+    personUpdateControl.text = _atsModel.admin;
+
+    print(_idActor);
+    print(_idRole);
+    notifyListeners();
   }
 }

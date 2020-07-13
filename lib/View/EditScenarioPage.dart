@@ -254,7 +254,7 @@ class EditScenarioPage extends StatelessWidget {
   Widget _buildBtnListActor(BuildContext context) {
     return RaisedButton(
       onPressed: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => ListActorInScenarioPage(aicVM: ListActorInScenarioVM(),)));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ListActorInScenarioPage(aicVM: ListActorInScenarioVM(editModel.scenarioID),))).then((value) => editModel.getScenario(editModel.scenarioID));
       },
       textColor: Colors.white,
       padding: const EdgeInsets.all(0.0),

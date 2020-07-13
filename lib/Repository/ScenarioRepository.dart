@@ -6,6 +6,7 @@ import 'package:mobiletayduky/Model/ScenarioAddModel.dart';
 import 'package:mobiletayduky/Model/ScenarioBasicModel.dart';
 import 'package:http/http.dart' as http;
 import 'package:mobiletayduky/Model/ScenarioEditModel.dart';
+import 'package:mobiletayduky/Model/ListActorInScenarioModel.dart';
 
 abstract class IScenarioRepository {
   Future<List<ScenarioBasicModel>> getScenarios();
@@ -19,6 +20,11 @@ abstract class IScenarioRepository {
   Future<ScenarioEditModel> getScenariosByID(int id);
 
   Future<dynamic> editScenario(int id, String editScenarioJson);
+
+  Future<dynamic> addActorToScenario(
+      int scenarioID, String addAcorToScenarioJson);
+
+  Future<List<ListActorInScenarioModel>> getActorInScenario(int scenarioID);
 }
 
 class ScenarioRepository implements IScenarioRepository {
@@ -125,5 +131,43 @@ class ScenarioRepository implements IScenarioRepository {
     } else {
       return "ERROR Database";
     }
+  }
+
+  @override
+  Future addActorToScenario(
+      int scenarioID, String addAcorToScenarioJson) async {
+    String urlAPI = APIHelper.apiProject();
+    Map<String, String> header = {
+      HttpHeaders.contentTypeHeader: "application/json",
+    };
+    var uri = Uri.http(urlAPI, "/api/Scenarios/$scenarioID/ActorRole");
+    http.Response response =
+        await http.post(uri, headers: header, body: addAcorToScenarioJson);
+    print(response.statusCode);
+    if (response.statusCode == 204) {
+      return "Ok";
+    } else if (response.statusCode == 409)
+      return "Conflict";
+    else
+      return "Bad Request";
+  }
+
+  @override
+  Future<List<ListActorInScenarioModel>> getActorInScenario(
+      int scenarioID) async {
+    String urlAPI = APIHelper.apiProject();
+    Map<String, String> header = {
+      HttpHeaders.contentTypeHeader: "application/json",
+    };
+    var uri = Uri.http(urlAPI, "/api/Scenarios/$scenarioID/ActorRole");
+    http.Response response = await http.get(uri, headers: header);
+    List<ListActorInScenarioModel> list;
+    if (response.statusCode == 200) {
+      list = (json.decode(response.body) as List)
+          .map((data) => ListActorInScenarioModel.fromJson(data))
+          .toList();
+      return list;
+    } else
+      return list;
   }
 }
