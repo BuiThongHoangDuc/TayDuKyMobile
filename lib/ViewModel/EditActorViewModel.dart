@@ -11,9 +11,12 @@ import 'package:mobiletayduky/Model/ActorAddModel.dart';
 import 'package:mobiletayduky/Repository/UserRepository.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:path/path.dart' as path;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditActorViewModel extends Model {
   final IUserRepository _userRepo = new UserRepository();
+
+  String _updateBy, _timeUpdate;
 
   ActorAddModel _editModel;
   TextEditingController usName = TextEditingController();
@@ -139,7 +142,7 @@ class EditActorViewModel extends Model {
     notifyListeners();
   }
 
-  void getUserInfo() {
+  void getUserInfo() async {
     usName.text = _editModel.usName;
     _name = Validate(_editModel.usName, null);
     usAddress.text = _editModel.usAddress;
@@ -153,6 +156,11 @@ class EditActorViewModel extends Model {
     usPass.text = _editModel.usPass;
     _pass = Validate(_editModel.usPass, null);
     _defaultImage = _editModel.usImage;
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _updateBy = prefs.getString("usName");
+    _timeUpdate = DateTime.now().toString();
+
     notifyListeners();
   }
 
@@ -207,12 +215,13 @@ class EditActorViewModel extends Model {
           usPhoneNum: _phoneNum.value,
           usDes: _description.value,
           usAddress: _location.value,
-          usImage: nowImage);
+          usImage: nowImage,
+          updateBy: _updateBy,
+          updateTime: _timeUpdate);
 
       String editActorJson = jsonEncode(editActor.toJson());
       print(editActorJson);
-      var status =
-          await _userRepo.editActor(_editModel.usID, editActorJson);
+      var status = await _userRepo.editActor(_editModel.usID, editActorJson);
       if (status == "ERROR Database") {
         _isLoading = false;
         _name = Validate(null, "Name Is Already Exist");

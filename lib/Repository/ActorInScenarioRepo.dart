@@ -8,7 +8,7 @@ import 'package:mobiletayduky/Model/EditActorToScenarioModel.dart';
 abstract class IActorInScenarioRepo {
   Future<dynamic> deleteAS(int id);
   Future<EditActorToScenarioModel> getAISByID(int id);
-  Future<dynamic> editAIS(int id, String editEquipmentJson);
+  Future<dynamic> editAIS(int id, String editAISJson);
   Future<dynamic> deleteAIS(int id);
 }
 
@@ -31,9 +31,23 @@ class ActorInScenarioRepo implements IActorInScenarioRepo {
   }
 
   @override
-  Future editAIS(int id, String editEquipmentJson) {
-    // TODO: implement editAIS
-    throw UnimplementedError();
+  Future editAIS(int id, String editAISJson) async {
+    String urlAPI = APIHelper.apiProject();
+    Map<String, String> header = {
+      HttpHeaders.contentTypeHeader: "application/json",
+    };
+    var uri = Uri.http(urlAPI, "/api/ActorRoles/$id");
+    http.Response response =
+        await http.put(uri, headers: header, body: editAISJson);
+    print(response.body);
+    if (response.statusCode == 200) {
+      int idEquipment = json.decode(response.body);
+      return idEquipment;
+    } else if (response.statusCode == 404) {
+      return "Not Found";
+    } else {
+      return "ERROR Database";
+    };
   }
 
   @override

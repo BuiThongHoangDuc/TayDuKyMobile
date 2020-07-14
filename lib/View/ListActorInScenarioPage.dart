@@ -149,7 +149,7 @@ Widget _getAICUI(BuildContext context, int index, ListActorInScenarioVM aicVM) {
                   padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
                   child: Row(
                     children: <Widget>[
-                      Text('Person ADD: ',
+                      Text('Person Update: ',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 14,

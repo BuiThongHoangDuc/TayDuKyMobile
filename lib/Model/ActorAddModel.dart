@@ -1,5 +1,5 @@
 class ActorAddModel {
-  final String usName, usEmail, usPass, usAddress, usPhoneNum, usDes, usImage;
+  final String usName, usEmail, usPass, usAddress, usPhoneNum, usDes, usImage,createBy,updateBy,updateTime;
   final int usID;
 
   ActorAddModel(
@@ -10,7 +10,10 @@ class ActorAddModel {
       this.usDes,
       this.usImage,
       this.usPass,
-      this.usPhoneNum});
+      this.usPhoneNum,
+      this.createBy,
+      this.updateBy,
+      this.updateTime});
 
   Map<String, dynamic> toJson() => {
         "UserId": usID,
@@ -20,7 +23,10 @@ class ActorAddModel {
         "UserPhoneNum": usPhoneNum,
         "UserEmail": usEmail,
         "UserPassword": usPass,
-        "UserAdress": usAddress
+        "UserAdress": usAddress,
+        "UserUpdateTime": updateTime,
+        "UserCreateBy": createBy,
+        "UserUpdateBy": updateBy,
       };
 
   factory ActorAddModel.fromJson(Map<String, dynamic> json) {
@@ -33,6 +39,9 @@ class ActorAddModel {
       usEmail: json['userEmail'] as String,
       usPass: json['userPassword'] as String,
       usAddress: json['userAdress'] as String,
+      createBy: json['userCreateBy'] as String,
+      updateBy: json['userUpdateBy'] as String,
+      updateTime: json['userUpdateTime'] as String
     );
   }
 }

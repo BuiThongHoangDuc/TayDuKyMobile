@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:mobiletayduky/Helper/Validate.dart';
 import 'package:mobiletayduky/Model/AddActorToScenarioModel.dart';
 import 'package:mobiletayduky/Model/EditActorToScenarioModel.dart';
 import 'package:mobiletayduky/Model/RoleModel.dart';
 import 'package:mobiletayduky/Model/UserBasicModel.dart';
+import 'package:mobiletayduky/Repository/ActorInScenarioRepo.dart';
 import 'package:mobiletayduky/Repository/RoleScenarioRepository.dart';
 import 'package:mobiletayduky/Repository/UserRepository.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -14,7 +18,7 @@ class DetailActorToScenarioVM extends Model {
   final IUserRepository _user = UserRepository();
   List<UserBasicModel> _userList;
 
-  AddActorToScenarioModel _addModel;
+//  AddActorToScenarioModel _addModel;
 
   List<UserBasicModel> get userList => _userList;
 
@@ -75,6 +79,8 @@ class DetailActorToScenarioVM extends Model {
   int _userId;
 
   int _scenarioID;
+
+  final IActorInScenarioRepo _ais = new ActorInScenarioRepo();
 
   void changeSelectedActor(String newValue) {
     _selectedActor = newValue;
@@ -164,9 +170,77 @@ class DetailActorToScenarioVM extends Model {
     latestDateControl.text =
         DateFormat('yyyy-MM-dd').format(DateTime.parse(_atsModel.dateUpdate));
     personUpdateControl.text = _atsModel.admin;
-
     print(_idActor);
     print(_idRole);
     notifyListeners();
   }
+
+  void updateInfo(BuildContext context) async {
+    _isReady = true;
+    if (_selectedActor == null) {
+      _isReady = false;
+      _errorActor = "Select Actor Please";
+    }
+    if (_selectedRole == null) {
+      _isReady = false;
+      _errorRole = "Select Role Please";
+    }
+    if (_description.value == null) {
+      changeComment("");
+      _isReady = false;
+    }
+    notifyListeners();
+
+    if (_isReady == true) {
+      _isLoading = true;
+      notifyListeners();
+
+      AddActorToScenarioModel editModel = new AddActorToScenarioModel(
+          actorInScenario: _idActor,
+          actorRoleDescription: _description.value,
+          actorRoleId: _atsModel.actorRoleId,
+          dateUpdate: DateTime.now().toString(),
+          roleScenarioId: _idRole,
+          scenarioId: _scenarioID,
+          admin: _userId,
+      );
+
+      String editAISJson = jsonEncode(editModel.toJson());
+      print(editAISJson);
+      var status = await _ais.editAIS(_atsModel.actorRoleId, editAISJson);
+      if (status == "ERROR Database") {
+        _isLoading = false;
+        _isReady = false;
+        _errorActor = "Change Another Actor";
+        _errorRole = "Change Another Role";
+
+        Fluttertoast.showToast(
+          msg: "Edit Actor In Scenario Fail",
+          textColor: Colors.red,
+          toastLength: Toast.LENGTH_SHORT,
+          backgroundColor: Colors.white,
+          gravity: ToastGravity.CENTER,
+        );
+        notifyListeners();
+      } else if (status == "Not Found") {
+        Fluttertoast.showToast(
+          msg: "Is No Longer Available",
+          textColor: Colors.red,
+          toastLength: Toast.LENGTH_SHORT,
+          backgroundColor: Colors.white,
+          gravity: ToastGravity.CENTER,
+        );
+      } else {
+        Navigator.of(context).pop();
+        Fluttertoast.showToast(
+          msg: "Edit Actor Success",
+          textColor: Colors.green,
+          toastLength: Toast.LENGTH_SHORT,
+          backgroundColor: Colors.white,
+          gravity: ToastGravity.CENTER,
+        );
+      }
+    }
+  }
+
 }

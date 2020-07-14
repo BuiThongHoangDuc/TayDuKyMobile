@@ -12,10 +12,14 @@ import 'package:mobiletayduky/View/ActorPage.dart';
 import 'package:mobiletayduky/ViewModel/ActorViewModel.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:path/path.dart' as path;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddActorViewModel extends Model {
   final UserRepository _userRepo = new UserRepository();
   ActorAddModel _addModel;
+
+  String _createBy, _updateBy, _timeUpdate;
+
   File _image;
 
   File get image => _image;
@@ -129,6 +133,11 @@ class AddActorViewModel extends Model {
   }
 
   void addActor(BuildContext context) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    _createBy = prefs.getString("usName");
+    _updateBy = prefs.getString("usName");
+    _timeUpdate = DateTime.now().toString();
+
     _isReady = true;
     if (_name.value == null) {
       changeName("");
@@ -173,7 +182,10 @@ class AddActorViewModel extends Model {
           usImage: nowImage,
           usName: _name.value,
           usPass: _pass.value,
-          usPhoneNum: _phoneNum.value);
+          usPhoneNum: _phoneNum.value,
+          updateTime: _timeUpdate,
+          updateBy: _updateBy,
+          createBy: _createBy);
 
       String addUserioJson = jsonEncode(_addModel.toJson());
       String status = await _userRepo.addUser(addUserioJson);

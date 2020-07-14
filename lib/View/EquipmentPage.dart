@@ -3,10 +3,12 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:mobiletayduky/Model/Destination.dart';
 import 'package:mobiletayduky/View/AddEquipmentPage.dart';
 import 'package:mobiletayduky/View/DrawerBar.dart';
+import 'package:mobiletayduky/View/EquipmentHasBorrow.dart';
 import 'package:mobiletayduky/View/LoadingScreen.dart';
 import 'package:mobiletayduky/View/NotFoundScreen.dart';
 import 'package:mobiletayduky/ViewModel/AddEquipmentViewModel.dart';
 import 'package:mobiletayduky/ViewModel/DrawerViewModel.dart';
+import 'package:mobiletayduky/ViewModel/EquipmentHasBorrowVM.dart';
 import 'package:mobiletayduky/ViewModel/EquipmentViewModel.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -32,6 +34,11 @@ class EquipmentPage extends StatelessWidget {
               );
             },
           ),
+          actions: <Widget>[
+            IconButton(icon: Icon(Icons.access_time), onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => EquipmentHasBorrow(ehb: EquipmentHasBorrowVM(),))).then((value) => equipVM.getAll());
+            }),
+          ],
         ),
         drawer: MyDrawer(model: DrawerViewModel()),
         body: GestureDetector(
@@ -222,7 +229,7 @@ Widget _getEquipmentUI(
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                           style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 14,
                               color: Color.fromARGB(255, 48, 48, 54)),
                         ),
                       ),

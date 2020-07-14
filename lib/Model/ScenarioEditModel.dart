@@ -29,6 +29,7 @@ class ScenarioEditModel {
         "ScenarioTimeTo": scTimeTo,
         "ScenarioCastAmout": scCastAmout,
         "ScenarioImage": scImage,
+        "ScenarioStatus": scStatus,
         "ScenarioScript": scScript,
       };
 

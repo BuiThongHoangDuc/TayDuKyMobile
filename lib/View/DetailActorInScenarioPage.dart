@@ -20,7 +20,7 @@ class DetailActorInScenarioPage extends StatelessWidget {
           actions: <Widget>[
             InkWell(
               onTap: () {
-//                addModel.addActortoScenario(context);
+                editModel.updateInfo(context);
               },
               child: Container(
                 child: Padding(

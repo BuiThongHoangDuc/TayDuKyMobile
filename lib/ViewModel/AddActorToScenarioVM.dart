@@ -197,10 +197,9 @@ class AddActorToScenarioVM extends Model {
         );
       } else if(status == "Conflict"){
         _isReady = false;
+        _isLoading = false;
         _errorActor = "Change Another Actor";
 
-        _isLoading = false;
-        _isReady = false;
         _errorRole = "Change Another Role";
         Fluttertoast.showToast(
           msg: "Add Actor Fail",

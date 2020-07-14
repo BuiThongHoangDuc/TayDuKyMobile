@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mobiletayduky/View/EquipmentInScenarioListPage.dart';
 import 'package:mobiletayduky/View/ListActorInScenarioPage.dart';
 import 'package:mobiletayduky/View/LoadingScreen.dart';
 import 'package:mobiletayduky/ViewModel/EditScenarioViewModel.dart';
+import 'package:mobiletayduky/ViewModel/EquipmentInScenarioListVM.dart';
 import 'package:mobiletayduky/ViewModel/ListActorInScenarioVM.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -278,7 +280,9 @@ class EditScenarioPage extends StatelessWidget {
 
   Widget _buildBtnListEquipment(BuildContext context) {
     return RaisedButton(
-      onPressed: () {},
+      onPressed: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => EquipmentInScenarioListPage(eic: EquipmentInScenarioListVM(editModel.scenarioID),))).then((value) => editModel.getScenario(editModel.scenarioID));
+      },
       textColor: Colors.white,
       padding: const EdgeInsets.all(0.0),
       child: Container(
