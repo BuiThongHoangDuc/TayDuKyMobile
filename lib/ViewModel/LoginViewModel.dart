@@ -12,6 +12,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 class LoginViewModel extends Model {
   final IUserRepository loginRepo = UserRepository();
 
+  int _role;
+  int get role => _role;
+
   LoginInfo _infoModel;
   LoginUserModel _userModel;
 
@@ -76,6 +79,7 @@ class LoginViewModel extends Model {
         pref.setString("usImage", _userModel.userImage);
         pref.setString("usEmail", _userModel.userEmail);
         pref.setInt("usRole", _userModel.userRole);
+        _role = _userModel.userRole;
         return Future<bool>.value(true);
       } else {
         return Future<bool>.value(false);

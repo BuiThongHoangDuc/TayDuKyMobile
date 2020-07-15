@@ -187,7 +187,7 @@ class EditActorPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text('Edit Actor'),
+          title: Text('Detail Info'),
           actions: <Widget>[
             InkWell(
               onTap: () {

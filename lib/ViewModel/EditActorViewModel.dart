@@ -25,9 +25,11 @@ class EditActorViewModel extends Model {
   TextEditingController usDes = TextEditingController();
   TextEditingController usEmail = TextEditingController();
   TextEditingController usPass = TextEditingController();
-
+  int _editModelRole;
+  int get editModelRole => _editModelRole;
   EditActorViewModel(ActorAddModel editModel) {
     this._editModel = editModel;
+
     getUserInfo();
   }
 

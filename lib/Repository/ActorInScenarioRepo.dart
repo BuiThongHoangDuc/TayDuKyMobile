@@ -4,12 +4,18 @@ import 'dart:io';
 import 'package:mobiletayduky/Helper/APIHelper.dart';
 import 'package:http/http.dart' as http;
 import 'package:mobiletayduky/Model/EditActorToScenarioModel.dart';
+import 'package:mobiletayduky/Model/ListActorInScenarioModel.dart';
+import 'package:mobiletayduky/Model/ScenarioBasicModel.dart';
 
 abstract class IActorInScenarioRepo {
   Future<dynamic> deleteAS(int id);
   Future<EditActorToScenarioModel> getAISByID(int id);
+  Future<List<ScenarioBasicModel>> getScenariosNotDone(int id);
+  Future<List<ScenarioBasicModel>> getScenariosDone(int id);
+  Future<List<ListActorInScenarioModel>> getRoleInScenario(int id,int scenarioID);
   Future<dynamic> editAIS(int id, String editAISJson);
   Future<dynamic> deleteAIS(int id);
+  
 }
 
 class ActorInScenarioRepo implements IActorInScenarioRepo {
@@ -83,6 +89,60 @@ class ActorInScenarioRepo implements IActorInScenarioRepo {
     } else {
       return "ERROR Database";
     }
+  }
+
+  @override
+  Future<List<ScenarioBasicModel>> getScenariosNotDone(int id) async {
+    String urlAPI = APIHelper.apiProject();
+    Map<String, String> header = {
+      HttpHeaders.contentTypeHeader: "application/json",
+    };
+    var uri = Uri.http(urlAPI, "/api/ActorRoles/$id/ListInProcess");
+    http.Response response = await http.get(uri, headers: header);
+    List<ScenarioBasicModel> list;
+    if (response.statusCode == 200) {
+      list = (json.decode(response.body) as List)
+          .map((data) => ScenarioBasicModel.fromJson(data))
+          .toList();
+      return list;
+    } else
+      return list;
+  }
+
+  @override
+  Future<List<ScenarioBasicModel>> getScenariosDone(int id) async {
+    String urlAPI = APIHelper.apiProject();
+    Map<String, String> header = {
+      HttpHeaders.contentTypeHeader: "application/json",
+    };
+    var uri = Uri.http(urlAPI, "/api/ActorRoles/$id/ListDone");
+    http.Response response = await http.get(uri, headers: header);
+    List<ScenarioBasicModel> list;
+    if (response.statusCode == 200) {
+      list = (json.decode(response.body) as List)
+          .map((data) => ScenarioBasicModel.fromJson(data))
+          .toList();
+      return list;
+    } else
+      return list;
+  }
+
+  @override
+  Future<List<ListActorInScenarioModel>> getRoleInScenario(int id, int scenarioID) async {
+    String urlAPI = APIHelper.apiProject();
+    Map<String, String> header = {
+      HttpHeaders.contentTypeHeader: "application/json",
+    };
+    var uri = Uri.http(urlAPI, "/api/ActorRoles/$id/$scenarioID");
+    http.Response response = await http.get(uri, headers: header);
+    List<ListActorInScenarioModel> list;
+    if (response.statusCode == 200) {
+      list = (json.decode(response.body) as List)
+          .map((data) => ListActorInScenarioModel.fromJson(data))
+          .toList();
+      return list;
+    } else
+      return list;
   }
 
 }

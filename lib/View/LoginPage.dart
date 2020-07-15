@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mobiletayduky/View/ActorViewScenarioPage.dart';
 import 'package:mobiletayduky/View/ScenarioPage.dart';
+import 'package:mobiletayduky/ViewModel/ActorViewScenarioVM.dart';
 import 'package:mobiletayduky/ViewModel/LoginViewModel.dart';
 import 'package:mobiletayduky/ViewModel/ScenarioViewModel.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -16,10 +18,19 @@ class LoginPage extends StatelessWidget {
 
   void loginFunction(BuildContext context) async {
     if (await loginVM.login()) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => ScenarioPage(scenarioModel: ScenarioViewModel(),)),
-      );
+      if(loginVM.role == 1) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) =>
+              ScenarioPage(scenarioModel: ScenarioViewModel(),)),
+        );
+      }else
+        {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) =>
+              ActorViewScenarioPage(avs: ActorViewScenarioVM(),)));
+        }
     } else {
       email.text = "";
       pass.text = "";

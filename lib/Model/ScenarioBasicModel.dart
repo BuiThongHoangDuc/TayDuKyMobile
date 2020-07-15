@@ -1,5 +1,5 @@
 class ScenarioBasicModel {
-  final String scName, scDes, scLocation, scImage;
+  final String scName, scDes, scLocation, scImage,scTimeFrom,scTimeto,scScript;
   final int scID, scStatus;
 
   ScenarioBasicModel(
@@ -8,7 +8,7 @@ class ScenarioBasicModel {
       this.scDes,
       this.scLocation,
       this.scImage,
-      this.scStatus});
+      this.scStatus,this.scTimeFrom,this.scTimeto,this.scScript});
 
 //  Map<String, dynamic> toJson() =>
 //      {"userId": userId, "userName": userName, "userEmail": userEmail, "userImage": userImage, "userRole": userRole};
@@ -21,6 +21,9 @@ class ScenarioBasicModel {
       scLocation: json['scenarioLocation'] as String,
       scImage: json['scenarioImage'] as String,
       scStatus: json['scenarioStatus'] as int,
+      scTimeFrom: json['scenarioTimeFrom'] as String,
+      scTimeto: json['scenarioTimeTo'] as String,
+      scScript: json['scenarioScript'] as String,
     );
   }
 }

@@ -166,7 +166,7 @@ Widget _getEquipmentUI(
                           children: <Widget>[
                             Container(
 //                            color: Colors.red,
-                              width: 80,
+                              width: 100,
                               child: Text('PersonAdd:',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(

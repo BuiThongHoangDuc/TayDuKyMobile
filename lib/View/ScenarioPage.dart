@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
 import 'package:mobiletayduky/Model/Destination.dart';
 import 'package:mobiletayduky/View/AddScenarioPage.dart';
 import 'package:mobiletayduky/View/DrawerBar.dart';
@@ -153,7 +154,7 @@ Widget _getScenarioUI(
     child: InkWell(
       onTap: () {
         int scenarioId = model.scenarioList[index].scID;
-        model.getDetailInfo(context,scenarioId);
+        model.getDetailInfo(context, scenarioId);
       },
       child: Container(
         height: 172,
@@ -218,7 +219,24 @@ Widget _getScenarioUI(
                         ),
                       ),
                     ),
-
+                    Row(
+                      children: <Widget>[
+                        Container(
+//                            color: Colors.red,
+                          width: 50,
+                          child: Text('Status:',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black)),
+                        ),
+                        getStatus(
+                            model.scenarioList[index].scStatus,
+                            model.scenarioList[index].scTimeFrom,
+                            model.scenarioList[index].scTimeto),
+                      ],
+                    ),
                     Padding(
                       padding: EdgeInsets.fromLTRB(0, 5, 0, 2),
                       child: Container(
@@ -242,6 +260,52 @@ Widget _getScenarioUI(
       ),
     ),
   );
+}
+
+Widget getStatus(int status, String dateFrom, String dateTo) {
+  DateTime now = DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
+  DateTime dateFromFormat = DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.parse(dateFrom)));
+  DateTime dateToFormat = DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.parse(dateTo)));
+  if (status == 2) {
+    return Container(
+      width: 160,
+      child: Text(
+        "Done",
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(color: Colors.green),
+      ),
+    );
+  } else {
+    if (now.isAfter(dateFromFormat) && now.isAfter(dateToFormat)) {
+      return Container(
+        width: 160,
+        child: Text(
+          "Over Date",
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: Colors.red),
+        ),
+      );
+    } else if(now.isBefore(dateFromFormat)){
+      return Container(
+        width: 160,
+        child: Text(
+          "Up Coming",
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: Colors.green),
+        ),
+      );
+    }
+    else {
+      return Container(
+        width: 160,
+        child: Text(
+          "In Process",
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(color: Colors.yellow),
+        ),
+      );
+    }
+  }
 }
 
 //Widget _getScenarioUI(BuildContext context, int index) {

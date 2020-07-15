@@ -1,57 +1,87 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mobiletayduky/Model/DestinationUser.dart';
+import 'package:mobiletayduky/View/DetailActorViewScenario.dart';
+import 'package:mobiletayduky/View/DrawerBar.dart';
 import 'package:mobiletayduky/View/LoadingScreen.dart';
 import 'package:mobiletayduky/View/NotFoundScreen.dart';
-import 'package:mobiletayduky/ViewModel/EquipmentHasBorrowVM.dart';
+import 'package:mobiletayduky/ViewModel/ActorViewScenarioDoneVM.dart';
+import 'package:mobiletayduky/ViewModel/DetailActorViewScenarioVM.dart';
+import 'package:mobiletayduky/ViewModel/DrawerViewModel.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class EquipmentHasBorrow extends StatelessWidget {
-  final EquipmentHasBorrowVM ehb;
+class ActorViewScenarioDonePage extends StatelessWidget {
+  final ActorViewScenarioDoneVM avsd;
 
-  EquipmentHasBorrow({this.ehb});
+  ActorViewScenarioDonePage({this.avsd});
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<EquipmentHasBorrowVM>(
-      model: ehb,
+    return ScopedModel<ActorViewScenarioDoneVM>(
+      model: avsd,
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text("Equipemt Has Borrow"),
-        ),
-        body: GestureDetector(
-          child: ScopedModelDescendant<EquipmentHasBorrowVM>(
-            builder: (context, child, ehb) {
-              if (ehb.isLoading == true) {
-                return LoadingScreen();
-              } else if (ehb.isLoading == false && ehb.isHave) {
-                return NotFoundScreen();
-              } else
-                return Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                  child: getListEquipment(context, ehb),
-                );
+          title: Text("Scenario"),
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: Icon(Icons.person),
+                onPressed: () => Scaffold.of(context).openDrawer(),
+                color: Colors.white,
+              );
             },
           ),
+        ),
+        drawer: MyDrawer(model: DrawerViewModel()),
+        body: ScopedModelDescendant<ActorViewScenarioDoneVM>(
+          builder: (context, child, avs) {
+            if (avs.isLoading == true) {
+              return LoadingScreen();
+            } else if (avs.isLoading == false && avs.isHave) {
+              return NotFoundScreen();
+            } else {
+              return Padding(
+                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                child: getListScenario(context, avs),
+              );
+            }
+          },
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: 1,
+          onTap: (index) {
+            avsd.onChangeBar(context, index);
+          },
+          items: allDestinationUser.map((DestinationUser destination) {
+            return BottomNavigationBarItem(
+              icon: Icon(destination.icon),
+              title: Text(destination.title),
+            );
+          }).toList(),
+          showUnselectedLabels: false,
+          selectedItemColor: Colors.blue,
+          unselectedItemColor: Colors.black45,
+          type: BottomNavigationBarType.fixed,
         ),
       ),
     );
   }
 }
 
-Widget getListEquipment(BuildContext context, EquipmentHasBorrowVM ehb) {
+getListScenario(BuildContext context, ActorViewScenarioDoneVM avsd) {
   return ListView.builder(
     scrollDirection: Axis.vertical,
-    itemCount: ehb.listEquipmentInSc.length,
+    itemCount: avsd.scenarioList.length,
     itemBuilder: (context, index) {
-      return _getEquipmentUI(context, index, ehb);
+      return _getScenarioUI(context, index, avsd);
     },
     padding: EdgeInsets.all(0),
   );
 }
 
-Widget _getEquipmentUI(
-    BuildContext context, int index, EquipmentHasBorrowVM ehb) {
+Widget _getScenarioUI(
+    BuildContext context, int index, ActorViewScenarioDoneVM avsd) {
   return Card(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(15.0),
@@ -59,15 +89,20 @@ Widget _getEquipmentUI(
     elevation: 5,
     child: InkWell(
       onTap: () {
-//        int id = equipVM.equipmentList[index].equipmentId;
-//        equipVM.getEquipmentInfo(context,id);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => DetailActorViewScenario(
+                  davsVM: DetailActorViewScenarioVM(avsd.scenarioList[index].scID,avsd.userID),
+                )));
       },
       child: Container(
-        height: 200,
+        height: 172,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Container(
-              height: 200,
+              height: 172,
               width: 130,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
@@ -76,120 +111,55 @@ Widget _getEquipmentUI(
                   ),
                   image: DecorationImage(
                     fit: BoxFit.fill,
-                    image: NetworkImage(
-                        ehb.listEquipmentInSc[index].equipmentImage),
+                    image: NetworkImage(avsd.scenarioList[index].scImage),
                   )),
             ),
             Container(
-              height: 200,
+              height: 172,
               child: Padding(
                 padding: EdgeInsets.fromLTRB(10, 2, 0, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+//                  Text(index.toString()),
                     Container(
                       width: 260,
-                      child: Text(ehb.listEquipmentInSc[index].equipmentName,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
+                      child: Text(avsd.scenarioList[index].scName,
                           style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black)),
+                              color: Colors.red)),
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
                       child: Container(
-                        width: 105,
+                        width: 220,
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.green),
+                          border: Border.all(color: Colors.teal),
                           borderRadius: BorderRadius.all(Radius.circular(50)),
                         ),
                         child: Row(
                           children: <Widget>[
                             Container(
-//                            color: Colors.red,
                               width: 70,
-                              child: Text('Quantity:',
+                              child: Text('Location:',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green)),
+                                      fontWeight: FontWeight.bold)),
                             ),
                             Container(
-//                            color: Colors.yellow,
-                              width: 30,
+                              width: 140,
                               child: Text(
-                                ehb.listEquipmentInSc[index].equipmentQuantity
-                                    .toString(),
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: Colors.green),
+                                avsd.scenarioList[index].scLocation,
+//                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
-                      child: Container(
-                        width: 260,
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-//                            color: Colors.red,
-                              width: 70,
-                              child: Text('DateAdd:',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black)),
-                            ),
-                            Container(
-//                            color: Colors.yellow,
-                              width: 160,
-                              child: Text(
-                                DateFormat('yyyy-MM-dd').format(DateTime.parse(
-                                    ehb.listEquipmentInSc[index].updateByDate)),
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
-                      child: Container(
-                        width: 260,
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-//                            color: Colors.red,
-                              width: 110,
-                              child: Text('ScenarioName:',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.red)),
-                            ),
-                            Container(
-//                            color: Colors.yellow,
-                              width: 150,
-                              child: Text(
-                                ehb.listEquipmentInSc[index].scenarioName,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
                       child: Container(
@@ -211,8 +181,7 @@ Widget _getEquipmentUI(
                               width: 160,
                               child: Text(
                                 DateFormat('yyyy-MM-dd').format(DateTime.parse(
-                                    ehb.listEquipmentInSc[index]
-                                        .scenarioTimeFrom)),
+                                    avsd.scenarioList[index].scTimeFrom)),
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(color: Colors.black),
                               ),
@@ -242,37 +211,7 @@ Widget _getEquipmentUI(
                               width: 160,
                               child: Text(
                                 DateFormat('yyyy-MM-dd').format(DateTime.parse(
-                                    ehb.listEquipmentInSc[index]
-                                        .scenarioTimeTo)),
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 3, 0, 3),
-                      child: Container(
-                        width: 260,
-                        child: Row(
-                          children: <Widget>[
-                            Container(
-//                            color: Colors.red,
-                              width: 90,
-                              child: Text('PersonAdd:',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black)),
-                            ),
-                            Container(
-//                            color: Colors.yellow,
-                              width: 160,
-                              child: Text(
-                                ehb.listEquipmentInSc[index].personUpdate,
+                                    avsd.scenarioList[index].scTimeto)),
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(color: Colors.black),
                               ),
@@ -297,10 +236,36 @@ Widget _getEquipmentUI(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black)),
                             ),
-                            getStatus(ehb.listEquipmentInSc[index].status,ehb.listEquipmentInSc[index].scenarioTimeFrom,ehb.listEquipmentInSc[index].scenarioTimeTo)
+                            getStatus(avsd.scenarioList[index].scStatus,avsd.scenarioList[index].scTimeFrom,avsd.scenarioList[index].scTimeto),
                           ],
                         ),
                       ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 40.0),
+                      child:(avsd.scenarioList[index].scScript!= null) ? Container(
+                        child: RaisedButton(
+                          onPressed: () {
+                            avsd.launchURL(avsd.scenarioList[index].scScript);
+                          },
+                          textColor: Colors.white,
+                          padding: const EdgeInsets.all(0.0),
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: <Color>[
+                                  Color(0xFF0D47A1),
+                                  Color(0xFF1976D2),
+                                  Color(0xFF42A5F5),
+                                ],
+                              ),
+                            ),
+                            padding: const EdgeInsets.all(10.0),
+                            child: const Text('Download Script',
+                                style: TextStyle(fontSize: 20)),
+                          ),
+                        ),
+                      ):Text('Does not add Script yet',style: TextStyle(color: Colors.red),),
                     ),
                   ],
                 ),
@@ -321,7 +286,7 @@ Widget getStatus(int status, String dateFrom, String dateTo) {
     return Container(
       width: 160,
       child: Text(
-        "Has Return",
+        "Done",
         overflow: TextOverflow.ellipsis,
         style: TextStyle(color: Colors.green),
       ),

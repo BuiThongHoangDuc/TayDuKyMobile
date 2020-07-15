@@ -131,7 +131,7 @@ class ScenarioViewModel extends Model {
             editModel: EditScenarioViewModel(scenario),
           ),
         ),
-      );
+      ).then((value) => getAll());
     }
   }
 }
